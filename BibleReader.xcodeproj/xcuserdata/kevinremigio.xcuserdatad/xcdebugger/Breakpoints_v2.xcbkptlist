@@ -23,16 +23,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6200A4F3-674B-4C06-9BB7-F1DBA7E0EA32"
+            uuid = "EEA5149D-57D5-407C-A048-E641FE7E7259"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BibleReader/Models/BibleViewModel.swift"
+            filePath = "BibleReader/SpeachManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
-            landmarkName = "stopSpeaking()"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "speakFromBeginning()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

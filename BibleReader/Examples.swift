@@ -6,10 +6,50 @@
 //
 
 import SwiftUI
-
 struct Examples: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Hello")
+    }
+}
+struct CustomScrollIndicatorView: View {
+    var alphabet = ["a","b","c", "d", "e","f","g", "h", "i","j","k", "l",
+                    "m","n","o", "p", "q","r","s", "t", "u","v","w", "x", "y", "z"]
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                ForEach((alphabet), id: \.self) { row in
+                    Text("Row \(row)")
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 100)
+                        .id(row)
+                }
+            }
+            .overlay(alignment: .top) {
+                HStack {
+                    Spacer()
+                    VStack {
+                        ForEach(alphabet, id: \.self) { title in
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    proxy.scrollTo(title, anchor: .top)
+                                    print("did tap: \(title)")
+                                }
+                            }) {
+                                Text(title)
+                                    .frame(width: 34, height: 18)
+                                    .font(.system(size: 18))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(Color.blue, lineWidth: 1)
+                                    )
+                            }
+                        }
+                    }
+                    .padding(.trailing)
+                }
+            }
+        }
     }
 }
 /// Example of a generec content
@@ -24,44 +64,5 @@ struct MyFirstGeneric<Content: View>: View {
 }
 
 #Preview {
-    Examples()
+    CustomScrollIndicatorView()
 }
-
-
-/*
-class BibleModel: ObservableObject {
-    @Published var bibleVerseArray: [BibleVerseModel] = []
-    @Published var isLoading: Bool = false
-    init() {
-        getBibleVersion()
-    }
-    func getBibleVersion() {
-        // catholic_public_domain_version_bible
-        // king_james_version_bible
-        if let filepath = Bundle.main.path(forResource: "catholic_public_domain_version_bible", ofType: "txt") {
-            do {
-                let contents = try String(contentsOfFile: filepath, encoding: .utf8)
-                
-//                bibleRawString = contents
-                //words = contents.components(separatedBy: " ")
-                let bibleRawStringLines:[String] = contents.components(separatedBy: .newlines)
-                for line in bibleRawStringLines {
-                    let verse = BibleVerseModel(
-                        bookName: "",
-                        chapter: "",
-                        verseNumber: "",
-                        verse: line)
-                    self.bibleVerseArray.append(verse)
-                }
-
-            } catch {
-                // contents could not be loaded
-                print("Error loading file: \(error)")
-            }
-        } else {
-            // example.txt not found!
-            print("example.txt not found in bundle.")
-        }
-    }
-}
-*/

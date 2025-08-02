@@ -41,15 +41,15 @@ struct ContentView: View {
             .safeAreaPadding(.bottom)
             .tag(1)
 
-//            VStack {
-//                SearchableBibleStackView(bibleLines: bible.bibleRawStringLines!)
-//            }
-//            .tabItem({
-//                Image(systemName: "text.page.badge.magnifyingglass")
-//                Text("Search")
-//            })
-//            .safeAreaPadding(.bottom)
-//            .tag(2)
+            VStack {
+                CustomScrollIndicatorView()
+            }
+            .tabItem({
+                Image(systemName: "book.pages")
+                Text("Custom Scroll Indicator")
+            })
+            .safeAreaPadding(.bottom)
+            .tag(2)
         }
     }
 }
@@ -245,144 +245,110 @@ struct ChaptersView: View {
     }
 }
 struct VerseView: View {
+    @State private var isPlaying: Bool = false
     var chapter: ChapterModel
     init(chapter: ChapterModel) {
         self.chapter = chapter
+        SpeechManager.shared.queue = chapter.verses.map { $0.verse }
     }
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
                 ForEach(chapter.verses, id: \.self) { verse in
                     Text("\(verse.number) \(verse.verse)")
+                        .textSelection(.enabled)
                 }
             }
         }
         .padding(.trailing, 12)
         .padding(.leading, 12)
         .navigationTitle("Chapter \(chapter.number)")
-        .onAppear(perform: speak)
-        .onDisappear(perform: stopSpeaking)
+        .onDisappear(perform: stop)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                stopButton
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                playPauseButton
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var playPauseButton: some View {
+        Button(action: {
+            isPlaying ? pause() : speak()
+            isPlaying.toggle()
+        }) {
+            Image(systemName: isPlaying ? "pause" : "play")
+        }
+    }
+    @ViewBuilder
+    private var stopButton: some View {
+        Button(action: {
+            stop()
+            isPlaying = false
+        }) {
+            Image(systemName: "stop")
+        }
     }
     func speak() {
-        SpeechManager.shared.queue = chapter.verses.map { $0.verse }
         SpeechManager.shared.speakFromBeginning()
     }
-    func stopSpeaking() {
+    func pause() {
+        SpeechManager.shared.pauseSpeaking()
+    }
+    func stop() {
         SpeechManager.shared.stopSpeaking()
     }
 }
-/*
-
-class Bible: ObservableObject {
-    @Published var bibleRawStringLines: [String]?
-    @Published var bibleVerseModel: [BibleVerseModel]?
-    init() {
-        // catholic_public_domain_version_bible
-        // king_james_version_bible
-        if let filepath = Bundle.main.path(forResource: "catholic_public_domain_version_bible", ofType: "txt") {
-            do {
-                let contents = try String(contentsOfFile: filepath, encoding: .utf8)
-                bibleRawStringLines = contents.components(separatedBy: .newlines)
-                
-                parseBooks()
-
-            } catch {
-                // contents could not be loaded
-                print("Error loading file: \(error)")
-            }
-        } else {
-            // example.txt not found!
-            print("example.txt not found in bundle.")
-        }
-    }
-
-    func parseBooks() {
-        if let rawBibleLines = bibleRawStringLines {
-            for line in rawBibleLines {
-                var verse: BibleVerseModel
-                let lineComponents = line.components(separatedBy: " ")
-                if let first = lineComponents.first {
-                    if let _ = Int(first) { //first item in string is a number
-                        let chapterAndVerse = lineComponents[2].components(separatedBy: ":")
-                        let verseNumber = chapterAndVerse.last?.split(separator: "\t")
-                        let loneVerse = line.components(separatedBy: "\t").last
-
-                        verse = BibleVerseModel(
-                            bookName: "\(first) \(lineComponents[1])",
-                            chapter: chapterAndVerse.first ?? "",
-                            verseNumber: String(verseNumber?.first ?? ""),
-                            verse: loneVerse ?? "")
-                    } else {
-                        let chapterAndVerse = lineComponents[1].components(separatedBy: ":")
-                        let verseNumber = chapterAndVerse.last?.split(separator: "\t")
-                        let loneVerse = line.components(separatedBy: "\t").last
-
-                        verse = BibleVerseModel(
-                            bookName: first,
-                            chapter: chapterAndVerse.first ?? "",
-                            verseNumber: String(verseNumber?.first ?? ""),
-                            verse: loneVerse ?? "")
-                    }
-                } else {
-                    verse = BibleVerseModel(
-                        bookName: "",
-                        chapter: "",
-                        verseNumber: "",
-                        verse: line)
-                }
-                bibleVerseModel?.append(verse)
-            }
-        }
-    }
-}
-*/
 
 
-import AVFoundation
-
-class SpeechhManager: NSObject, AVSpeechSynthesizerDelegate {
-    let synthesizer = AVSpeechSynthesizer()
-    var textChunks: [String] = []
-    var currentUtteranceIndex = 0
-
-    override init() {
-        super.init()
-        synthesizer.delegate = self
-    }
-
-    func speakLongText(_ longText: String) {
-        // Split the text into sentences or paragraphs
-        // For simplicity, let's split by sentences here
-        textChunks = longText.components(separatedBy: ".")
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-            .map { $0 + "." } // Add the period back to each sentence
-        
-        currentUtteranceIndex = 0
-        speakNextChunk()
-    }
-
-    func speakNextChunk() {
-        guard currentUtteranceIndex < textChunks.count else {
-            print("Finished speaking all chunks.")
-            return
-        }
-
-        let utterance = AVSpeechUtterance(string: textChunks[currentUtteranceIndex])
-        synthesizer.speak(utterance)
-    }
-
-    // MARK: - AVSpeechSynthesizerDelegate
-
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        
-        currentUtteranceIndex += 1
-        speakNextChunk()
-    }
-
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        print("Speech cancelled.")
-    }
-}
+//import AVFoundation
+//
+//class SpeechhManager: NSObject, AVSpeechSynthesizerDelegate {
+//    let synthesizer = AVSpeechSynthesizer()
+//    var textChunks: [String] = []
+//    var currentUtteranceIndex = 0
+//
+//    override init() {
+//        super.init()
+//        synthesizer.delegate = self
+//    }
+//
+//    func speakLongText(_ longText: String) {
+//        // Split the text into sentences or paragraphs
+//        // For simplicity, let's split by sentences here
+//        textChunks = longText.components(separatedBy: ".")
+//            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+//            .map { $0 + "." } // Add the period back to each sentence
+//        
+//        currentUtteranceIndex = 0
+//        speakNextChunk()
+//    }
+//
+//    func speakNextChunk() {
+//        guard currentUtteranceIndex < textChunks.count else {
+//            print("Finished speaking all chunks.")
+//            return
+//        }
+//
+//        let utterance = AVSpeechUtterance(string: textChunks[currentUtteranceIndex])
+//        synthesizer.speak(utterance)
+//    }
+//
+//    // MARK: - AVSpeechSynthesizerDelegate
+//
+//    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+//        
+//        currentUtteranceIndex += 1
+//        speakNextChunk()
+//    }
+//
+//    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+//        print("Speech cancelled.")
+//    }
+//}
 /*
 // How to use it:
 let speechManager = SpeechManager()
