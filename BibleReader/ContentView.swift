@@ -42,7 +42,18 @@ struct ContentView: View {
             .tag(1)
 
             VStack {
-                CustomScrollIndicatorView()
+                Text("Under Construction")
+//                CustomScrollIndicatorView(book: )
+//                    book: ["a": ["a", "b", "c"],
+//                                        "b": ["a", "b", "c"],
+//                                        "c": ["a", "b", "c"],
+//                                        "d": ["a", "b", "c"],
+//                                        "e": ["a", "b", "c"],
+//                                        "f": ["a", "b", "c"],
+//                                        "g": ["a", "b", "c"],
+//                                        "h": ["a", "b", "c"],
+//                                        "i": ["a", "b", "c"]])
+                //CustomScrollIndicatorView()
             }
             .tabItem({
                 Image(systemName: "book.pages")
@@ -70,27 +81,20 @@ struct BooksView: View {
             .toolbar {
 
             }
-            .toolbarTitleMenu {
-                Button("King James Version") {
-                    print("ayooo")
-                }
-                Button("Catholic Public Domain Version") {
-                    print("dude!")
-                }
-            }
         }
     }
     @ViewBuilder
     private var scrollview: some View {
         ScrollView(.vertical) {
-            LazyVStack(alignment: .leading) {
+            LazyVStack(alignment: .trailing) {
                 ForEach(books, id: \.self) { book in
                     
                     NavigationLink(value: book) {
                         Text(book.name)
                     }
                     //Text("\(books[index].name) chapters: \(books[index].chapters.count)")
-                        .padding(.vertical, 2)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
                     /*
                     Text("\(line.bookName) \(line.chapter) \(line.verseNumber)")
                         .padding(.vertical, 2)
@@ -224,6 +228,7 @@ struct ChaptersView: View {
     init(book: BookModel) {
         self.book = book
     }
+    /*
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
@@ -242,6 +247,10 @@ struct ChaptersView: View {
         .navigationDestination(for: ChapterModel.self) { chapter in
             VerseView(chapter: chapter)
         }
+    }
+    */
+    var body: some View {
+        CustomScrollIndicatorView(book: book)
     }
 }
 struct VerseView: View {

@@ -11,7 +11,7 @@ struct Examples: View {
         Text("Hello")
     }
 }
-struct CustomScrollIndicatorView: View {
+struct CustomScrollIndicatorVieww: View {
     var alphabet = ["a","b","c", "d", "e","f","g", "h", "i","j","k", "l",
                     "m","n","o", "p", "q","r","s", "t", "u","v","w", "x", "y", "z"]
     var body: some View {
@@ -64,5 +64,5 @@ struct MyFirstGeneric<Content: View>: View {
 }
 
 #Preview {
-    CustomScrollIndicatorView()
+    CustomScrollIndicatorVieww()
 }

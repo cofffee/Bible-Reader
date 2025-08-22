@@ -19,7 +19,6 @@ struct BookModel: Identifiable, Hashable, Equatable {
     let id: String = UUID().uuidString
     let name: String
     var chapters: [ChapterModel]
-
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
