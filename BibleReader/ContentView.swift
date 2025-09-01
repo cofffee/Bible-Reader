@@ -92,13 +92,8 @@ struct BooksView: View {
                     NavigationLink(value: book) {
                         Text(book.name)
                     }
-                    //Text("\(books[index].name) chapters: \(books[index].chapters.count)")
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 12)
-                    /*
-                    Text("\(line.bookName) \(line.chapter) \(line.verseNumber)")
-                        .padding(.vertical, 2)
-                     */
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 12)
                 }
             }
         }
@@ -109,25 +104,6 @@ struct BooksView: View {
             ChaptersView(book: book)
         }
     }
-/*
-    @ViewBuilder
-    private var scrollview: some View {
-        ScrollView(.vertical) {
-            LazyVStack(alignment: .leading) {
-                ForEach(bibleLines ?? [], id: \.self) { line in
-                    //line.verse
-                    //\()
-                    //
-                    Text("\(line.bookName) \(line.chapter) \(line.verseNumber)")
-                        .padding(.vertical, 2)
-                }
-            }
-        }
-        .padding(.trailing, 12)
-        .padding(.leading, 12)
-        .navigationTitle("Jesus Christ!")
-    }
- */
 }
 
 struct SearchableBibleStackView: View {
@@ -152,9 +128,6 @@ struct SearchableBibleStackView: View {
                     versetoolbar
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    searchtoolbar
-                }
-                ToolbarItem(placement: .bottomBar) {
                     searchtoolbar
                 }
             }
@@ -251,6 +224,9 @@ struct ChaptersView: View {
     */
     var body: some View {
         CustomScrollIndicatorView(book: book)
+        .navigationDestination(for: ChapterModel.self) { chapter in
+            VerseView(chapter: chapter)
+        }
     }
 }
 struct VerseView: View {
@@ -265,7 +241,7 @@ struct VerseView: View {
             LazyVStack(alignment: .leading) {
                 ForEach(chapter.verses, id: \.self) { verse in
                     Text("\(verse.number) \(verse.verse)")
-                        .textSelection(.enabled)
+                    .textSelection(.enabled)
                 }
             }
         }

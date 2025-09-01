@@ -50,20 +50,11 @@ struct CustomScrollIndicatorView: View {
     var body: some View {
         ScrollViewReader { proxy in
             HStack {
-                ScrollView {
-                    LazyVStack {
-                        devicesList
-                    }
-
-                }
-                .scrollIndicators(.hidden)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
+                booksList
                 sectionIndexTitles(proxy: proxy)
-                    .frame(width: 144)
-          }
-//          .overlay(sectionIndexTitles(proxy: proxy))
-         }
+                .frame(width: 144)
+            }
+        }
         /*
         ScrollViewReader { proxy in
             ScrollView {
@@ -74,10 +65,10 @@ struct CustomScrollIndicatorView: View {
           .overlay(sectionIndexTitles(proxy: proxy))
          }
          */
-//        .navigationBarTitle("\(Array(devices.keys)[0])") ///Array(devices.keys)
+        .navigationBarTitle(book.name) ///Array(devices.keys)
   }
 
-    var devicesList: some View {
+    var booksList: some View {
         /*
         ForEach(devices.sorted(by: { (lhs, rhs) -> Bool in false }), id: \.key) { categoryName, devicesArray in
             Section(header: HeaderView(title: categoryName)) {
@@ -117,56 +108,24 @@ struct CustomScrollIndicatorView: View {
             }
         }
 */
+        ScrollView {
+            LazyVStack {
+                ForEach(Array(book.chapters.map { $0.number }), id: \.self) { title in //.sorted()
+                    Section(header: HeaderView(title: title)) {
+                        chapterVerses(index: Int(title) ?? 0)
+                    }
+                }
+            }
+        }
+        .scrollIndicators(.hidden)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
         
-        ForEach(Array(book.chapters.map { $0.number }), id: \.self) { title in //.sorted()
-            Section(header: HeaderView(title: title)) {
-                chapterVerses(index: Int(title) ?? 0)
-                /*
-                ForEach(book.chapters[Int(title)].verses) { item in
-                    RowView(text: "\(item.number) \(item.verse)")
-//                RowView(text: "\(item.number) \(item.verse)")
-                }
-                 */
-            }
-        }
-        /*
-        ForEach(book.chapters.indices, id: \.self) { index in
-            Section(header: HeaderView(title: book.chapters[index].number ) ) {
-                let sectionTitle = book.chapters[index]
-                ForEach(sectionTitle.verses, id: \.self) { item in
-                    RowView(text: "\(item.number) \(item.verse)")
-                }
-            }
-        }
-        */
-        /*
-        ForEach(chapterTitles.indices, id: \.self) { index in
-            Section(header: HeaderView(title: chapterTitles[index] ) ) {
-//                let sectionTitle = book.chapters[index]
-//                ForEach(sectionTitle.verses, id: \.self) { item in
-//                    RowView(text: "\(item.number) \(item.verse)")
-//                }
-            }
-        }
-         */
-        
-        /*
-        ForEach(Array(book.chapters)) { chapter in
-            Section(header: HeaderView(title: chapter.number)) {
-                ForEach(chapter.verses) { item in
-                    RowView(text: "\(item.number) \(item.verse)")
-                }
-            }
-        }
-         */
-        /*
-        ForEach(book.chapters) { chapter in
-            Section(header: HeaderView(title: chapter.number)) {
-                ForEach(chapter.verses) { item in
-                    RowView(text: "\(item.number) \(item.verse)")
-                }
-            }
-        }*/
+//        ForEach(Array(book.chapters.map { $0.number }), id: \.self) { title in //.sorted()
+//            Section(header: HeaderView(title: title)) {
+//                chapterVerses(index: Int(title) ?? 0)
+//            }
+//        }
     }
     func chapterVerses(index: Int) -> some View {
         ForEach(book.chapters[checked: index-1]?.verses ?? []) { item in
@@ -196,12 +155,11 @@ struct CustomScrollIndicatorView: View {
         }
          */
 
-        SectionIndexTitles(proxy: proxy, titles: Array(book.chapters.map { $0.number }))
-         
-//        SectionIndexTitles(proxy: proxy, titles: chapterTitles)
-//        SectionIndexTitles(proxy: proxy, titles: book.chapters)
+        SectionIndexTitles(
+            proxy: proxy,
+            titles: Array(book.chapters.map { $0.number }))
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding()
+        .padding(.top, 12)
  
     }
 }
@@ -209,11 +167,20 @@ struct CustomScrollIndicatorView: View {
 struct HeaderView: View {
     let title: String
     var body: some View {
+        NavigationLink(value: title) {
+            Text(title)
+            .font(.title)
+            .fontWeight(.bold)
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        /*
         Text(title)
         .font(.title)
         .fontWeight(.bold)
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+         */
     }
 }
 
@@ -233,7 +200,6 @@ struct SectionIndexTitles: View {
     @GestureState private var dragLocation: CGPoint = .zero
     var body: some View {
         ScrollView {
-            Color(.yellow)
             VStack {
                 ForEach(Array(titles), id: \.self) { title in
                     SectionIndexTitle(title: title)
@@ -299,8 +265,10 @@ struct SectionIndexTitle: View {
         
         
         RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .foregroundColor(Color.gray.opacity(0.1))
-        .frame(width: 40, height: 40)
+//        .foregroundColor(Color.gray.opacity(0.1))
+            .foregroundColor(Color.clear)
+//        .frame(width: 40, height: 40)
+        .frame(width: 40)
         .overlay(
             Text(title)
             .foregroundColor(.blue)
