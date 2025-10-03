@@ -13,22 +13,19 @@ struct VersesStackView: View {
     var body: some View {
         content
         .onAppear{ randomize() }
-        
     }
 
     @ViewBuilder
     var content: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                Spacer()
-                scrollview
-            }
-            .navigationTitle("Verses")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    randomizetoolbar
-                }
+        VStack(spacing: 0) {
+            Spacer()
+            scrollview
+        }
+        .navigationTitle("Verses")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                randomizetoolbar
             }
         }
     }

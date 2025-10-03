@@ -9,6 +9,7 @@ import Foundation
 class BibleViewModel: ObservableObject {
     @Published var bibleRawStringLines: [String] = []
     @Published var bible = BibleModel(books: [])
+    var isLoading = true
     init() {
         Task {
             await fetchBooks()
@@ -43,9 +44,11 @@ class BibleViewModel: ObservableObject {
 
     func setBibleModel(content: String) async {
         let parsedBible = await parseModelLines(content: content)
-        await MainActor.run { bible = parsedBible }
+        await MainActor.run { bible = parsedBible
+            isLoading = false
+        }
     }
-
+ 
     func parseModelLines(content: String) async -> BibleModel {
         var buildingBible = BibleModel(books: [])
         let lines = content.components(separatedBy: .newlines)

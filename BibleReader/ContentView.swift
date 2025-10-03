@@ -14,14 +14,12 @@ struct ContentView: View {
     @ObservedObject var bibleViewModel: BibleViewModel = BibleViewModel()
 
     var body: some View {
-//        VStack {
-//            SearchableBibleStackView(bibleLines: bible.bibleRawStringLines!)
-//            
-////            SearchableBibleStackView(bibleLines: bible.bibleRawStringLines!)
-//        }
+        //SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines)
+        /*
         TabView(selection: $selectedTab) {
-            VStack {
-                SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines)
+            NavigationStack {
+                SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines,
+                                         books: bibleViewModel.bible.books)
             }
             .tabItem({
                 Image(systemName: "book")
@@ -30,8 +28,6 @@ struct ContentView: View {
             .tag(0)
 
             VStack {
-                //VersesStackView(bibleLines: bible.bibleRawStringLines!)
-//                guard let bibleVerses = bible.bibleVerseModel else { return }
                 BooksView(books: bibleViewModel.bible.books)
             }
             .tabItem({
@@ -43,17 +39,6 @@ struct ContentView: View {
 
             VStack {
                 Text("Under Construction")
-//                CustomScrollIndicatorView(book: )
-//                    book: ["a": ["a", "b", "c"],
-//                                        "b": ["a", "b", "c"],
-//                                        "c": ["a", "b", "c"],
-//                                        "d": ["a", "b", "c"],
-//                                        "e": ["a", "b", "c"],
-//                                        "f": ["a", "b", "c"],
-//                                        "g": ["a", "b", "c"],
-//                                        "h": ["a", "b", "c"],
-//                                        "i": ["a", "b", "c"]])
-                //CustomScrollIndicatorView()
             }
             .tabItem({
                 Image(systemName: "book.pages")
@@ -62,6 +47,10 @@ struct ContentView: View {
             .safeAreaPadding(.bottom)
             .tag(2)
         }
+         */
+        NavigationStack {
+            BooksView(bibleViewModel: bibleViewModel)
+        }
     }
 }
 
@@ -69,39 +58,68 @@ struct ContentView: View {
     ContentView()
 }
 struct BooksView: View {
-//    @State var bible: Bible
-    var books: [BookModel]
+    @ObservedObject var bibleViewModel: BibleViewModel
     var body: some View {
         content
     }
     @ViewBuilder
     private var content: some View {
-        NavigationStack {
-            scrollview
-            .toolbar {
-
+        scrollview
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                versetoolbar
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                booktoolbar
             }
         }
     }
     @ViewBuilder
     private var scrollview: some View {
         ScrollView(.vertical) {
-            LazyVStack(alignment: .trailing) {
-                ForEach(books, id: \.self) { book in
-                    
-                    NavigationLink(value: book) {
-                        Text(book.name)
+            if bibleViewModel.isLoading {
+                ProgressView()
+            } else {
+                LazyVStack(alignment: .trailing) {
+                    ForEach(bibleViewModel.bible.books, id: \.self) { book in
+                        NavigationLink(value: book) {
+                            Text(book.name)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
                     }
-                    .padding(.vertical, 4)
-                    .padding(.horizontal, 12)
                 }
             }
         }
+        .scrollIndicators(.hidden)
         .padding(.trailing, 12)
         .padding(.leading, 12)
-        .navigationTitle("Jesus Christ!")
+        .navigationTitle("The Bible")
         .navigationDestination(for: BookModel.self) { book in
             ChaptersView(book: book)
+        }
+        .navigationDestination(for: String.self) { value in
+            VersesStackView(bibleLines: bibleViewModel.bibleRawStringLines)
+        }
+        .navigationDestination(for: ChapterModel.self) { chapter in
+            VerseView(chapter: chapter)
+        }
+    }
+
+    @ViewBuilder
+    private var versetoolbar: some View {
+        NavigationLink {
+            VersesStackView(bibleLines: bibleViewModel.bibleRawStringLines)
+        } label: {
+            Image(systemName: "book.pages")
+        }
+    }
+    @ViewBuilder
+    private var booktoolbar: some View {
+        NavigationLink {
+            SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines)
+        } label: {
+            Image(systemName: "book")
         }
     }
 }
@@ -110,6 +128,7 @@ struct SearchableBibleStackView: View {
     @State private var searchText = ""
     @State private var searchIsActive = false
     var bibleLines: [String]
+
     var body: some View {
         if searchIsActive {
             content
@@ -121,23 +140,18 @@ struct SearchableBibleStackView: View {
 
     @ViewBuilder
     private var content: some View {
-        NavigationStack {
-            scrollview
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    versetoolbar
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    searchtoolbar
-                }
+        scrollview
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                searchtoolbar
             }
-            .toolbarTitleMenu {
-                Button("King James Version") {
+        }
+        .toolbarTitleMenu {
+            Button("King James Version") {
 //                    searchIsActive.toggle()
-                }
-                Button("Catholic Public Domain Version") {
-                    
-                }
+            }
+            Button("Catholic Public Domain Version") {
+                
             }
         }
     }
@@ -154,18 +168,9 @@ struct SearchableBibleStackView: View {
         }
         .padding(.trailing, 12)
         .padding(.leading, 12)
-        .navigationTitle("The Bible")
+        .navigationTitle("Jesus Christ!")
         .navigationDestination(for: String.self) { value in
             VersesStackView(bibleLines: bibleLines)
-        }
-    }
-
-    @ViewBuilder
-    private var versetoolbar: some View {
-        NavigationLink {
-            VersesStackView(bibleLines: bibleLines)
-        } label: {
-            Image(systemName: "book.pages")
         }
     }
 
@@ -175,14 +180,6 @@ struct SearchableBibleStackView: View {
             searchIsActive.toggle()
         }) {
             Image(systemName: "magnifyingglass")
-        }
-    }
-    @ViewBuilder
-    private var amentoolbar: some View {
-        Button(action: {
-            print("Amen!")
-        }) {
-            Image(systemName: "cross")
         }
     }
 
@@ -201,32 +198,8 @@ struct ChaptersView: View {
     init(book: BookModel) {
         self.book = book
     }
-    /*
-    var body: some View {
-        ScrollView(.vertical) {
-            LazyVStack(alignment: .leading) {
-                ForEach(book.chapters, id: \.self) { chapter in
-                    NavigationLink(value: chapter) {
-                        Text(chapter.number)
-                            .font(.system(size: 20))
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }
-                }
-            }
-        }
-        .padding(.trailing, 12)
-        .padding(.leading, 12)
-        .navigationTitle(book.name)
-        .navigationDestination(for: ChapterModel.self) { chapter in
-            VerseView(chapter: chapter)
-        }
-    }
-    */
     var body: some View {
         CustomScrollIndicatorView(book: book)
-        .navigationDestination(for: ChapterModel.self) { chapter in
-            VerseView(chapter: chapter)
-        }
     }
 }
 struct VerseView: View {
@@ -289,54 +262,3 @@ struct VerseView: View {
 }
 
 
-//import AVFoundation
-//
-//class SpeechhManager: NSObject, AVSpeechSynthesizerDelegate {
-//    let synthesizer = AVSpeechSynthesizer()
-//    var textChunks: [String] = []
-//    var currentUtteranceIndex = 0
-//
-//    override init() {
-//        super.init()
-//        synthesizer.delegate = self
-//    }
-//
-//    func speakLongText(_ longText: String) {
-//        // Split the text into sentences or paragraphs
-//        // For simplicity, let's split by sentences here
-//        textChunks = longText.components(separatedBy: ".")
-//            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-//            .map { $0 + "." } // Add the period back to each sentence
-//        
-//        currentUtteranceIndex = 0
-//        speakNextChunk()
-//    }
-//
-//    func speakNextChunk() {
-//        guard currentUtteranceIndex < textChunks.count else {
-//            print("Finished speaking all chunks.")
-//            return
-//        }
-//
-//        let utterance = AVSpeechUtterance(string: textChunks[currentUtteranceIndex])
-//        synthesizer.speak(utterance)
-//    }
-//
-//    // MARK: - AVSpeechSynthesizerDelegate
-//
-//    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-//        
-//        currentUtteranceIndex += 1
-//        speakNextChunk()
-//    }
-//
-//    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-//        print("Speech cancelled.")
-//    }
-//}
-/*
-// How to use it:
-let speechManager = SpeechManager()
-let longText = "This is a very long piece of text that needs to be spoken. It contains multiple sentences and paragraphs. The speech synthesizer will handle each chunk individually to provide a smoother listening experience. You can also pause and resume the speech as needed."
-speechManager.speakLongText(longText)
-*/
