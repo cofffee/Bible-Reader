@@ -14,40 +14,6 @@ struct ContentView: View {
     @ObservedObject var bibleViewModel: BibleViewModel = BibleViewModel()
 
     var body: some View {
-        //SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines)
-        /*
-        TabView(selection: $selectedTab) {
-            NavigationStack {
-                SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines,
-                                         books: bibleViewModel.bible.books)
-            }
-            .tabItem({
-                Image(systemName: "book")
-                Text("Book")
-            })
-            .tag(0)
-
-            VStack {
-                BooksView(books: bibleViewModel.bible.books)
-            }
-            .tabItem({
-                Image(systemName: "book.pages")
-                Text("Verses")
-            })
-            .safeAreaPadding(.bottom)
-            .tag(1)
-
-            VStack {
-                Text("Under Construction")
-            }
-            .tabItem({
-                Image(systemName: "book.pages")
-                Text("Custom Scroll Indicator")
-            })
-            .safeAreaPadding(.bottom)
-            .tag(2)
-        }
-         */
         NavigationStack {
             BooksView(bibleViewModel: bibleViewModel)
         }
