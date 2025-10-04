@@ -25,17 +25,15 @@ struct CustomScrollIndicatorView: View {
             LazyVStack {
                 
                 ForEach(Array(book.chapters.map { $0.number }), id: \.self) { title in //.sorted()
-                    Section(header: HeaderView(title: title)) {
-                        chapterVerses(index: Int(title) ?? 0)
+                    if let chapterNumber = Int(title),
+                       let chapter = book.chapters[checked: chapterNumber-1] {
+                        Section(header: HeaderView(
+                            title: title,
+                            chapter: chapter)) {
+                                chapterVerses(index: chapterNumber)
+                        }
                     }
                 }
-                 /*
-                ForEach(book.chapters, id: \.self) { title in //.sorted()
-                    Section(header: HeaderView(title: title)) {
-                        chapterVerses(index: Int(title.number) ?? 0)
-                    }
-                }
-                  */
             }
         }
         .scrollIndicators(.hidden)
@@ -58,10 +56,9 @@ struct CustomScrollIndicatorView: View {
 
 struct HeaderView: View {
     let title: String
-//    let title: ChapterModel
+    let chapter: ChapterModel
     var body: some View {
-        NavigationLink(value: title) {
-//            Text(title.number)
+        NavigationLink(value: chapter) {
             Text(title)
             .font(.title)
             .fontWeight(.bold)

@@ -18,6 +18,36 @@
             endingLineNumber = "139"
             landmarkName = "scrollview"
             landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "FA5DD596-E383-46E1-BD29-2DB2A6BE1A8E - 12c3a4d6504adada"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BibleReader.SearchableBibleStackView.scrollview.getter : some"
+                  moduleName = "BibleReader.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/kevinremigio/Desktop/BibleReader/BibleReader/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "139"
+                  endingLineNumber = "139">
+               </Location>
+               <Location
+                  uuid = "FA5DD596-E383-46E1-BD29-2DB2A6BE1A8E - ab3849e6cbc22042"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; BibleReader.VersesStackView in BibleReader.SearchableBibleStackView.scrollview.getter : some"
+                  moduleName = "BibleReader.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/kevinremigio/Desktop/BibleReader/BibleReader/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "139"
+                  endingLineNumber = "139">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -39,32 +69,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "00BFC71B-F331-4A70-B84A-0681139095EE"
-            shouldBeEnabled = "Yes"
+            uuid = "A220E7C4-E152-4D5D-B8DA-F6728BAECD01"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BibleReader/ContentView.swift"
+            filePath = "BibleReader/CustomScrollViewIndicator.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
-            landmarkName = "scrollview"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FF572FC2-63B0-4568-8462-237C24A2864F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BibleReader/ContentView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "scrollview"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
