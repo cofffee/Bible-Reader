@@ -6,20 +6,39 @@
 //
 
 import Foundation
+enum BibleVersion: String, CaseIterable, Identifiable {
+    var id: Self { self }
+    case catholic = "catholic_public_domain_version_bible"
+    case kingjames = "king_james_version_bible"
+    case americanstandard = "american_standard_version"
+    case worldenglish = "world_english_bible"
+    case smithsliteral = "smiths_literal_translation"
+    
+    var title: String {
+        switch self {
+        case .catholic: return "Catholic Public Domain"
+        case .kingjames: return "King James"
+        case .americanstandard: return "American Standard"
+        case .worldenglish: return "World English"
+        case .smithsliteral: return "Smith's Literal Translation"
+        }
+    }
+}
 class BibleViewModel: ObservableObject {
+
+    
     @Published var bibleRawStringLines: [String] = []
     @Published var bible = BibleModel(books: [])
-    var isLoading = true
+    var isLoading = false
     init() {
         Task {
-            await fetchBooks()
+            await fetchBooks(version: .americanstandard)
         }
     }
 
-    func fetchBooks() async {
-        // catholic_public_domain_version_bible
-        // king_james_version_bible
-        if let filepath = Bundle.main.path(forResource: "catholic_public_domain_version_bible", ofType: "txt") {
+    func fetchBooks(version: BibleVersion) async {
+        isLoading = true
+        if let filepath = Bundle.main.path(forResource: version.rawValue, ofType: "txt") {
             do {
                 let (data, _) = try await URLSession.shared.data(from: URL(filePath: filepath))
                 if let contents = String(data: data, encoding: .utf8) {
@@ -44,7 +63,8 @@ class BibleViewModel: ObservableObject {
 
     func setBibleModel(content: String) async {
         let parsedBible = await parseModelLines(content: content)
-        await MainActor.run { bible = parsedBible
+        await MainActor.run {
+            bible = parsedBible
             isLoading = false
         }
     }

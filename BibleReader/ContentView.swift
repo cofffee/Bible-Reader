@@ -36,7 +36,16 @@ struct BooksView: View {
                 versetoolbar
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                booktoolbar
+                searchablebooktoolbar
+            }
+        }
+        .toolbarTitleMenu {
+            ForEach(BibleVersion.allCases) { version in
+                Button(version.title) {
+                    Task {
+                        await bibleViewModel.fetchBooks(version: version)
+                    }
+                }
             }
         }
     }
@@ -51,14 +60,14 @@ struct BooksView: View {
                         NavigationLink(value: book) {
                             Text(book.name)
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 2)
                         .padding(.horizontal, 12)
                     }
                 }
             }
         }
         .scrollIndicators(.hidden)
-        .padding(.trailing, 12)
+        .padding(.trailing, 4)
         .padding(.leading, 12)
         .navigationTitle("The Bible")
         .navigationDestination(for: BookModel.self) { book in
@@ -81,7 +90,7 @@ struct BooksView: View {
         }
     }
     @ViewBuilder
-    private var booktoolbar: some View {
+    private var searchablebooktoolbar: some View {
         NavigationLink {
             SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines)
         } label: {
@@ -226,5 +235,4 @@ struct VerseView: View {
         SpeechManager.shared.stopSpeaking()
     }
 }
-
 

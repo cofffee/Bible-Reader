@@ -14,7 +14,7 @@ struct CustomScrollIndicatorView: View {
             HStack {
                 booksList
                 sectionIndexTitles(proxy: proxy)
-                .frame(width: 144)
+                .frame(width: 74) //144 //84
             }
         }
         .navigationBarTitle(book.name)
@@ -23,7 +23,6 @@ struct CustomScrollIndicatorView: View {
     var booksList: some View {
         ScrollView {
             LazyVStack {
-                
                 ForEach(Array(book.chapters.map { $0.number }), id: \.self) { title in //.sorted()
                     if let chapterNumber = Int(title),
                        let chapter = book.chapters[checked: chapterNumber-1] {
@@ -124,7 +123,7 @@ struct SectionIndexTitle: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 8, style: .continuous)
         .foregroundColor(Color.clear)
-        .frame(width: 40)
+        .frame(width: 30)//40)
         .overlay(
             Text(title)
             .foregroundColor(.blue)
