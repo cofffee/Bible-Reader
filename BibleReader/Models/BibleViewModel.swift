@@ -17,10 +17,10 @@ enum BibleVersion: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .catholic: return "Catholic Public Domain"
-        case .kingjames: return "King James Version"
-        case .americanstandard: return "American Standard Version"
+        case .kingjames: return "King James"
+        case .americanstandard: return "American Standard"
         case .worldenglish: return "World English Bible"
-        case .smithsliteral: return "Smith's Literal Translation"
+        case .smithsliteral: return "Smith's Literal"
         }
     }
 }
