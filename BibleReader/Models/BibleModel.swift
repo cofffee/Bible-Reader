@@ -10,7 +10,7 @@ import Foundation
 struct BibleModel: Identifiable, Hashable, Equatable {
     let id: String = UUID().uuidString
     var books: [BookModel]
-
+    var version: BibleVersion
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

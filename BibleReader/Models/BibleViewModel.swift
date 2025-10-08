@@ -17,25 +17,25 @@ enum BibleVersion: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .catholic: return "Catholic Public Domain"
-        case .kingjames: return "King James"
-        case .americanstandard: return "American Standard"
-        case .worldenglish: return "World English"
+        case .kingjames: return "King James Version"
+        case .americanstandard: return "American Standard Version"
+        case .worldenglish: return "World English Bible"
         case .smithsliteral: return "Smith's Literal Translation"
         }
     }
 }
 class BibleViewModel: ObservableObject {
-
-    
     @Published var bibleRawStringLines: [String] = []
-    @Published var bible = BibleModel(books: [])
+    @Published var bible = BibleModel(books: [], version: .americanstandard)
+    let defaultBibleVersion: BibleVersion = .americanstandard
     var isLoading = false
     init() {
         Task {
-            await fetchBooks(version: .americanstandard)
+            await fetchBooks(version: defaultBibleVersion)
         }
     }
 
+//    @MainActor
     func fetchBooks(version: BibleVersion) async {
         isLoading = true
         if let filepath = Bundle.main.path(forResource: version.rawValue, ofType: "txt") {
@@ -43,7 +43,12 @@ class BibleViewModel: ObservableObject {
                 let (data, _) = try await URLSession.shared.data(from: URL(filePath: filepath))
                 if let contents = String(data: data, encoding: .utf8) {
                     Task { await parseStringLines(content: contents) }
-                    Task { await setBibleModel(content: contents) }
+                    Task {
+                        await setBibleModel(content: contents)
+                        await MainActor.run {
+                            bible.version = version
+                        }
+                    }
                 }
             } catch {
                 // contents could not be loaded
@@ -62,33 +67,26 @@ class BibleViewModel: ObservableObject {
     }
 
     func setBibleModel(content: String) async {
-        let parsedBible = await parseModelLines(content: content)
+        let parsedBible = await parseBibleLinesIntoModel(content: content)
         await MainActor.run {
             bible = parsedBible
             isLoading = false
         }
     }
  
-    func parseModelLines(content: String) async -> BibleModel {
-        var buildingBible = BibleModel(books: [])
+    func parseBibleLinesIntoModel(content: String) async -> BibleModel {
+        var buildingBible = BibleModel(books: [], version: defaultBibleVersion)
         let lines = content.components(separatedBy: .newlines)
 
         for line in lines {
             let lineComponents = line.components(separatedBy: " ")
             guard let firstWord = lineComponents.first else { return buildingBible }
-            let bookNameIndex = Int(firstWord) == nil ? 1 : 2 //if first word is not a number 1, else 2
-            // TODO: FIX FOR BOOK OF SONGS
+            let bookNameIndex = firstWord == "Song" ? 3 : Int(firstWord) == nil ? 1 : 2 //if first word is Song then bookNameIndex is 3 else if it is not a number 1, else 2
             guard let chapterAndVerse = lineComponents[checked: bookNameIndex]?.components(separatedBy: ":") else { return buildingBible }
+
             let bookName = lineComponents.prefix(bookNameIndex).joined(separator: " ")
             guard let chapterNumber = chapterAndVerse.first else { return buildingBible }
-            
             guard let verseLine = line.components(separatedBy: "\t").last else { return  buildingBible }
-            
-            //guard let numberAndVerseArray = chapterAndVerse.last?.split(separator: "\t") else { return buildingBible } ///empty for the edge case
-//            guard let verseNumber = numberAndVerseArray.first else { return }
-               
-//            print("\(bookName) :: chapter \(chapterNumber) verseNumSubs:: \(numberAndVerseArray) verseNumber:: \(String(chapterAndVerse[checked: 1] ?? "what doesnt exist?") )")
-
             let verseNumber = String(chapterAndVerse[checked: 1]?.components(separatedBy: "\t").first ?? "")
 
             let verse = VerseModel(number: verseNumber, verse: verseLine)

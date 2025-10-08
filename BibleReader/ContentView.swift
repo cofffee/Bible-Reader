@@ -69,7 +69,7 @@ struct BooksView: View {
         .scrollIndicators(.hidden)
         .padding(.trailing, 4)
         .padding(.leading, 12)
-        .navigationTitle("The Bible")
+        .navigationTitle(bibleViewModel.bible.version.title)
         .navigationDestination(for: BookModel.self) { book in
             ChaptersView(book: book)
         }
@@ -121,14 +121,6 @@ struct SearchableBibleStackView: View {
                 searchtoolbar
             }
         }
-        .toolbarTitleMenu {
-            Button("King James Version") {
-//                    searchIsActive.toggle()
-            }
-            Button("Catholic Public Domain Version") {
-                
-            }
-        }
     }
 
     @ViewBuilder
@@ -143,7 +135,7 @@ struct SearchableBibleStackView: View {
         }
         .padding(.trailing, 12)
         .padding(.leading, 12)
-        .navigationTitle("Jesus Christ!")
+        .navigationTitle("The Bible")
         .navigationDestination(for: String.self) { value in
             VersesStackView(bibleLines: bibleLines)
         }
@@ -195,7 +187,7 @@ struct VerseView: View {
         }
         .padding(.trailing, 12)
         .padding(.leading, 12)
-        .navigationTitle("Chapter \(chapter.number)")
+        .navigationTitle("\(chapter.number)")
         .onDisappear(perform: stop)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
