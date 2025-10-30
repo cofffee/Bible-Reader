@@ -35,24 +35,33 @@ struct SearchableBibleStackView: View {
     private var scrollview: some View {
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
+                if searchIsActive {
+                    Text("\(searchResults.count) results")
+                        .font(.system(size: 20, weight: .bold))
+                        .padding(.top, 8)
+                }
+                
                 ForEach(searchResults, id: \.self) { line in
                     Text(line)
                         .padding(.vertical, 2)
                 }
             }
         }
-        .padding(.trailing, 12)
-        .padding(.leading, 12)
-        .navigationTitle("The Bible")
-        .navigationDestination(for: String.self) { value in
-            VersesStackView(bibleLines: bibleLines)
-        }
+        .scrollIndicators(.hidden)
+        .padding(.trailing, 8)
+        .padding(.leading, 8)
+//        .navigationTitle("The Bible")
+//        .navigationDestination(for: String.self) { value in
+//            VersesStackView(bibleLines: bibleLines)
+//        }
     }
 
     @ViewBuilder
     private var searchtoolbar: some View {
         Button(action: {
-            searchIsActive.toggle()
+            withAnimation(.linear) {
+                searchIsActive.toggle()
+            }
         }) {
             Image(systemName: "magnifyingglass")
         }

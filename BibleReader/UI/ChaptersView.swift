@@ -23,17 +23,52 @@ struct VerseView: View {
         self.chapter = chapter
         SpeechManager.shared.queue = chapter.verses.map { $0.verse }
     }
+//    @Environment(\.presentationMode) var mode
     var body: some View {
+        /*
+        List {
+            ForEach(chapter.verses, id: \.self) { verse in
+                Text("\(verse.number) \(verse.verse)")
+                    .listRowSeparator(.hidden)
+                    .listRowSpacing(0)
+                    .swipeActions {
+                        Button("Save") {
+                            print("\(verse.verse)")
+                        }
+                        .tint(.green)
+                    }
+                    .background(Color.blue)
+//                .textSelection(.enabled)
+                //CustomSwipeCell(item: "\(verse.number) \(verse.verse)")
+            }
+        }
+        .listStyle(.plain)
+//        .listRowSeparator(.hidden)
+//        .environment(\.defaultMinListRowHeight, 0)
+        .navigationTitle("\(chapter.number)")
+        .onDisappear(perform: stop)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                stopButton
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                playPauseButton
+            }
+        }
+         */
+        
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
                 ForEach(chapter.verses, id: \.self) { verse in
                     Text("\(verse.number) \(verse.verse)")
-                    .textSelection(.enabled)
+                    //.textSelection(.enabled)
+                    //CustomSwipeCell(item: "\(verse.number) \(verse.verse)")
                 }
             }
         }
-        .padding(.trailing, 12)
-        .padding(.leading, 12)
+        .scrollIndicators(.hidden)
+        .padding(.trailing, 8)
+        .padding(.leading, 8)
         .navigationTitle("\(chapter.number)")
         .onDisappear(perform: stop)
         .toolbar {

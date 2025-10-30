@@ -14,7 +14,7 @@ struct CustomScrollIndicatorView: View {
             HStack {
                 booksList
                 sectionIndexTitles(proxy: proxy)
-                .frame(width: 74) //144 //84
+                .frame(width: 64) //144 //84
             }
         }
         .navigationBarTitle(book.name)
@@ -71,7 +71,7 @@ struct RowView: View {
     let text: String
     var body: some View {
         Text(text)
-        .padding(.leading, 16)
+        .padding(.leading, 8)
         .padding(.trailing, 8)
         .padding(.bottom, 2)
         .frame(maxWidth: .infinity, alignment: .leading)

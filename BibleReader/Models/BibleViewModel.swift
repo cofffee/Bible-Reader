@@ -73,7 +73,35 @@ class BibleViewModel: ObservableObject {
             isLoading = false
         }
     }
- 
+    struct Line {
+        let book: String
+        let chapterNum: String
+        let verseNum: String
+        let verse: String
+        var composite: String {
+            return "\(book) \(chapterNum) \(verseNum)"
+        }
+    }
+    static func parse(line: String) -> Line {
+        let emptyLine = Line(
+            book: "",
+            chapterNum: "",
+            verseNum: "",
+            verse: "")
+        let lineComponents = line.components(separatedBy: " ")
+        guard let firstWord = lineComponents.first else { return emptyLine }
+        let bookNameIndex = firstWord == "Song" ? 3 : Int(firstWord) == nil ? 1 : 2 //if first word is Song then bookNameIndex is 3 else if it is not a number 1, else 2
+        guard let chapterAndVerse = lineComponents[checked: bookNameIndex]?.components(separatedBy: ":") else { return emptyLine }
+
+        let bookName = lineComponents.prefix(bookNameIndex).joined(separator: " ")
+        guard let chapterNumber = chapterAndVerse.first else { return emptyLine }
+        guard let verseLine = line.components(separatedBy: "\t").last else { return  emptyLine }
+        let verseNumber = String(chapterAndVerse[checked: 1]?.components(separatedBy: "\t").first ?? "")
+
+        let verse = VerseModel(number: verseNumber, verse: verseLine)
+
+        return Line(book: bookName, chapterNum: chapterNumber, verseNum: verseNumber, verse: verseLine)
+    }
     func parseBibleLinesIntoModel(content: String) async -> BibleModel {
         var buildingBible = BibleModel(books: [], version: defaultBibleVersion)
         let lines = content.components(separatedBy: .newlines)

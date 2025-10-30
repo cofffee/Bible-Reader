@@ -40,19 +40,27 @@ struct VersesStackView: View {
     var scrollview: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(bibleLines, id: \.self) { line in
+                ForEach(bibleLines, id: \.self) { line in //bibleLines
+                    let lineModel = BibleViewModel.parse(line: line)
                     Rectangle()
                         .fill(.clear)
                         .overlay{
                             ZStack {
                                 VStack {
-                                    Text(line)
+                                    Text(lineModel.verse)
+//                                        .background(Color.yellow)
                                         .foregroundColor(.black)
                                         .padding(.trailing, 12)
                                         .padding(.leading, 12)
-                                        .padding(.bottom, 160)
                                         .font(.system(size: 24))
+                                    HStack {
+                                        Text(lineModel.composite)
+                                            .font(.system(size: 12))
+                                        
+                                    }
+                                    .padding(.top, 8)
                                 }
+                                .padding(.bottom, 160)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -77,6 +85,6 @@ struct VersesStackView: View {
     }
 }
 
-#Preview {
-    VersesStackView(bibleLines: ["Hi"])
-}
+//#Preview {
+//    VersesStackView(bibleLines: ["Hi"])
+//}
