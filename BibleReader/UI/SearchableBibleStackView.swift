@@ -43,17 +43,12 @@ struct SearchableBibleStackView: View {
                 
                 ForEach(searchResults, id: \.self) { line in
                     Text(line)
-                        .padding(.vertical, 2)
                 }
             }
         }
         .scrollIndicators(.hidden)
         .padding(.trailing, 8)
         .padding(.leading, 8)
-//        .navigationTitle("The Bible")
-//        .navigationDestination(for: String.self) { value in
-//            VersesStackView(bibleLines: bibleLines)
-//        }
     }
 
     @ViewBuilder
@@ -71,7 +66,6 @@ struct SearchableBibleStackView: View {
         if searchText.isEmpty {
             return bibleLines
         } else {
-            //return bibleLines.filter { $0.range(of: searchText, options: .caseInsensitive) != nil }
             return bibleLines.filter { $0.contains(searchText) }
         }
     }

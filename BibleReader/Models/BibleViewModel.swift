@@ -98,37 +98,25 @@ class BibleViewModel: ObservableObject {
         guard let verseLine = line.components(separatedBy: "\t").last else { return  emptyLine }
         let verseNumber = String(chapterAndVerse[checked: 1]?.components(separatedBy: "\t").first ?? "")
 
-        let verse = VerseModel(number: verseNumber, verse: verseLine)
-
         return Line(book: bookName, chapterNum: chapterNumber, verseNum: verseNumber, verse: verseLine)
     }
     func parseBibleLinesIntoModel(content: String) async -> BibleModel {
         var buildingBible = BibleModel(books: [], version: defaultBibleVersion)
         let lines = content.components(separatedBy: .newlines)
-
         for line in lines {
-            let lineComponents = line.components(separatedBy: " ")
-            guard let firstWord = lineComponents.first else { return buildingBible }
-            let bookNameIndex = firstWord == "Song" ? 3 : Int(firstWord) == nil ? 1 : 2 //if first word is Song then bookNameIndex is 3 else if it is not a number 1, else 2
-            guard let chapterAndVerse = lineComponents[checked: bookNameIndex]?.components(separatedBy: ":") else { return buildingBible }
-
-            let bookName = lineComponents.prefix(bookNameIndex).joined(separator: " ")
-            guard let chapterNumber = chapterAndVerse.first else { return buildingBible }
-            guard let verseLine = line.components(separatedBy: "\t").last else { return  buildingBible }
-            let verseNumber = String(chapterAndVerse[checked: 1]?.components(separatedBy: "\t").first ?? "")
-
-            let verse = VerseModel(number: verseNumber, verse: verseLine)
-            let chapterModel = ChapterModel(number: chapterNumber, verses: [verse])
-            let bookModel = BookModel(name: bookName, chapters: [chapterModel])
+            let parsedLine = BibleViewModel.parse(line: line)
+            let verseModel = VerseModel(number: parsedLine.verseNum, verse: parsedLine.verse)
+            let chapterModel = ChapterModel(number: parsedLine.chapterNum, verses: [verseModel])
+            let bookModel = BookModel(name: parsedLine.book, chapters: [chapterModel])
 
             //buildingBible.books.append(bookModel) // TODO: create an update method for bible
-            if let bookIndex = buildingBible.books.firstIndex(where: { $0.name == bookName }) {
+            if let bookIndex = buildingBible.books.firstIndex(where: { $0.name == parsedLine.book }) {
                 /// "genesis" exists,
                 /// get genesis and update genesis
                 /// check if genesis has the first chapter
-                if let chapterIndex = buildingBible.books[bookIndex].chapters.firstIndex(where: { $0.number == chapterNumber }) {
+                if let chapterIndex = buildingBible.books[bookIndex].chapters.firstIndex(where: { $0.number == parsedLine.chapterNum }) {
                     /// chapter exists, so update the verse
-                    buildingBible.books[bookIndex].chapters[chapterIndex].verses.append(verse)
+                    buildingBible.books[bookIndex].chapters[chapterIndex].verses.append(verseModel)
                 } else {
                     /// insert as CHAPTER
                     buildingBible.books[bookIndex].chapters.append(chapterModel)

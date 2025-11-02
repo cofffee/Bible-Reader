@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CustomScrollIndicatorView: View {
+struct BookChaptersCustomScrollIndicatorView: View {
     let book: BookModel
     var body: some View {
         ScrollViewReader { proxy in
@@ -132,7 +132,7 @@ struct SectionIndexTitle: View {
     }
 }
 #Preview {
-    CustomScrollIndicatorView(book: BookModel(
+    BookChaptersCustomScrollIndicatorView(book: BookModel(
         name: "gem",
         chapters: [
             ChapterModel(

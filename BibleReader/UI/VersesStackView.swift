@@ -40,7 +40,7 @@ struct VersesStackView: View {
     var scrollview: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(bibleLines, id: \.self) { line in //bibleLines
+                ForEach(bibleLines, id: \.self) { line in
                     let lineModel = BibleViewModel.parse(line: line)
                     Rectangle()
                         .fill(.clear)
@@ -48,7 +48,6 @@ struct VersesStackView: View {
                             ZStack {
                                 VStack {
                                     Text(lineModel.verse)
-//                                        .background(Color.yellow)
                                         .foregroundColor(.black)
                                         .padding(.trailing, 12)
                                         .padding(.leading, 12)
