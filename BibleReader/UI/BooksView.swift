@@ -59,8 +59,9 @@ struct BooksView: View {
 
     @ViewBuilder
     private var oldTestamentRows: some View {
+        let count = bibleViewModel.bible.version.oldTestamentCount
         LazyVStack(alignment: .trailing) {
-            ForEach(bibleViewModel.bible.books.prefix(39), id: \.self) { book in
+            ForEach(bibleViewModel.bible.books.prefix(count), id: \.self) { book in
                 NavigationLink(value: book) {
                     Text(book.name)
                 }
@@ -71,8 +72,9 @@ struct BooksView: View {
     }
     @ViewBuilder
     private var newTestamentRows: some View {
+        let count = bibleViewModel.bible.version.newTestamentCount
         LazyVStack(alignment: .leading) {
-            ForEach(bibleViewModel.bible.books.suffix(27), id: \.self) { book in
+            ForEach(bibleViewModel.bible.books.suffix(count), id: \.self) { book in
                 NavigationLink(value: book) {
                     Text(book.name)
                 }

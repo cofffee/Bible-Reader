@@ -23,6 +23,18 @@ enum BibleVersion: String, CaseIterable, Identifiable {
         case .smithsliteral: return "Smith's Literal"
         }
     }
+    var oldTestamentCount: Int {
+        return 39
+    }
+    var newTestamentCount: Int {
+        switch self {
+        case .catholic: return 27
+        case .kingjames: return 28
+        case .americanstandard: return 27
+        case .worldenglish: return  28
+        case .smithsliteral: return 27
+        }
+    }
 }
 class BibleViewModel: ObservableObject {
     @Published var bibleRawStringLines: [String] = []
