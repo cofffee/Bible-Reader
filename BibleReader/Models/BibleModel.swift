@@ -28,6 +28,7 @@ struct BookModel: Identifiable, Hashable, Equatable {
 }
 struct ChapterModel: Identifiable, Hashable, Equatable {
     let id: String = UUID().uuidString
+    let book: String
     let number: String
     var verses: [VerseModel]
 

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct VerseView: View {
+    @AppStorage("savedVerses", store: UserDefaults(suiteName: "SavedVerses.OpenBibleReader")) var savedVerses: Data = .init()
+    @State var tempVersesArray: [String] = []
     @State private var isPlaying: Bool = false
     var chapter: ChapterModel
     init(chapter: ChapterModel) {
@@ -20,10 +22,27 @@ struct VerseView: View {
             LazyVStack(alignment: .leading) {
                 ForEach(chapter.verses, id: \.self) { verse in
                     Text("\(verse.number) \(verse.verse)")
+                        .textSelection(.enabled)
+                        .contextMenu { // Adds custom menu items on long press
+                            Button {
+                                UIPasteboard.general.string = "\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)"//"\(verse.number) \(verse.verse)"
+                            } label: {
+                                Label("Copy", systemImage: "document.on.document")
+                            }
+                            ShareLink(item: "\(verse.number) \(verse.verse)")
+                            Button {
+                                // SAVE THE VERSE
+                                tempVersesArray = Storage.loadStringArray(data: savedVerses)
+                                tempVersesArray.append("\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)")
+                                savedVerses = Storage.archiveStringArray(object: tempVersesArray)
+                                
+                            } label: {
+                                Label("Save", systemImage: "heart")
+                            }
+                        }
                 }
             }
         }
-
         .scrollIndicators(.hidden)
         .padding(.trailing, 8)
         .padding(.leading, 8)

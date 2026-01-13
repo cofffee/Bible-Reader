@@ -48,7 +48,6 @@ struct VersesStackView: View {
                             ZStack {
                                 VStack {
                                     Text(lineModel.verse)
-                                        .foregroundColor(.black)
                                         .padding(.trailing, 12)
                                         .padding(.leading, 12)
                                         .font(.system(size: 24))

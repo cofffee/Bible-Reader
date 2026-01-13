@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BooksView: View {
+    @AppStorage("isDarkMode") var isDarkMode: Bool = false
     @State var showSheet: Bool = false
     @ObservedObject var bibleViewModel: BibleViewModel
     var body: some View {
@@ -17,11 +18,10 @@ struct BooksView: View {
     private var content: some View {
         scrollview
         .toolbar {
-            /*
             ToolbarItemGroup(placement: .topBarLeading) {
                 premiumsubscriptiontoolbar
+                darkmodetoolbar
             }
-             */
             ToolbarItemGroup(placement: .topBarTrailing) {
                 versetoolbar
                 searchablebooktoolbar
@@ -97,29 +97,44 @@ struct BooksView: View {
          */
         ///*Sheet
        .sheet(isPresented: $showSheet) {
-           //SubscriptionScreen(show: $showSheet)
-           SubscriptionScreen()
+           //SubscriptionScreenView(show: $showSheet)
+//           SubscriptionScreenView()
+           /* SettingsView() */
+           SavedVersesView()
        }
-         //*/
+
 //        ZStack {
 //            if showSheet {
-//                SubscriptionScreen(show: $showSheet)
+//                SubscriptionScreen()//show: $showSheet)
 //                    .padding(.top, 100)
 //                    .transition(.move(edge: .bottom))
 //                    .animation(.spring())
 //            }
 //        }
 //        .zIndex(2.0)
-//        SubscriptionScreen(show: $showSheet)
+//        SubscriptionScreenView()//show: $showSheet)
 //            .padding(.top, 100)
 //            .offset(y: showSheet ? 0 : UIScreen.main.bounds.height)
 //            .animation(.spring())
         
 //        if showSheet {
-//            SubscriptionScreen()
+//            VersesStackView(bibleLines: bibleViewModel.bibleRawStringLines)
 //                .transition(.move(edge: .bottom))
-//                .animation(.spring())//, value: UUID())
+//                .animation(.spring(), value: UUID())
+//
+//            SubscriptionScreenView()
+//                .transition(.move(edge: .bottom))
+//                .animation(.spring(), value: UUID())
 //        }
+    }
+
+    @ViewBuilder
+    private var darkmodetoolbar: some View {
+        Button(action: {
+            isDarkMode.toggle()
+       }) {
+           Image(systemName: "moon")
+       }
     }
 
     @ViewBuilder
@@ -151,88 +166,8 @@ struct BooksView: View {
         }
     }
 }
-
-struct CustomListData: Identifiable {
-    let id = UUID()
-    let title: String
-    let price: String
-    let titleDetail: String
-}
-struct SubscriptionScreen: View {
-//    @Environment(\.presentationMode) var mode
-//    @Binding var show: Bool
-    
-    var body: some View {
-        /*
-        ZStack(alignment: .topLeading) {
-            Color.red.edgesIgnoringSafeArea(.all)
-            Button {
-                //mode.wrappedValue.dismiss()
-                //show.toggle()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(.white)
-                    .font(.largeTitle)
-                    .padding(20)
-            }
-            
-        }*/
-        VStack {
-            Image(systemName: "book")
-                .frame(width: 120, height: 120, alignment: .center)
-            Text("Subscribe to Bible")
-                .font(.system(size: 36, weight: .medium))
-            /// product list
-            List {
-                ProductRow(title: "One-time purchase", price: "$9.99", detailTitle: "")
-                ProductRow(title: "Monthly", price: "$4.99", detailTitle: "7-day free trial")
-                ProductRow(title: "Yearly", price: "$39.99", detailTitle: "7-day free trial")
-            }
-            .listStyle(.grouped)
-            .frame(width: .infinity, height: 260, alignment: .center)
-            /// features list
-//            List {
-                Text("Audio Bible")
-                Text("Audio Bible")
-                Text("Audio Bible")
-                Text("Audio Bible")
-//            }
-            .scrollDisabled(true)
-            Text("Audio Bible")
-            Button("Restore Purchase") {
-                print("BUY")
-            }
-            .buttonStyle(.bordered)
-            Spacer()
-        }
-    }
-}
-
-struct ProductRow: View {
-    let title: String
-    let price: String
-    let detailTitle: String
-    var body: some View {
-        VStack {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .font(.system(size: 20, weight: .medium))
-                    if !detailTitle.isEmpty {
-                        Text(detailTitle)
-                    }
-                }
-                Spacer()
-                Text(price)
-                    .font(.system(size: 20, weight: .medium))
-            }
-        }
-        
-        .padding(.horizontal)
-    }
-}
 #Preview {
     BooksView(bibleViewModel: BibleViewModel())
     //SubscriptionScreen(show: true)
-    //SubscriptionScreen()
+    //SubscriptionScreenView()
 }

@@ -75,6 +75,7 @@ struct RowView: View {
         .padding(.trailing, 8)
         .padding(.bottom, 2)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .textSelection(.enabled)
     }
 }
 struct SectionIndexTitles: View {
@@ -136,6 +137,7 @@ struct SectionIndexTitle: View {
         name: "gem",
         chapters: [
             ChapterModel(
+                book: "Genesis",
                 number: "judas",
                 verses: [ VerseModel(number: "1", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "2", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
@@ -147,6 +149,7 @@ struct SectionIndexTitle: View {
                         ]
             ),
             ChapterModel(
+                book: "Genesis",
                 number: "carrot",
                 verses: [ VerseModel(number: "1", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "2", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
@@ -158,6 +161,7 @@ struct SectionIndexTitle: View {
                         ]
             ),
             ChapterModel(
+                book: "Genesis",
                 number: "beach",
                 verses: [ VerseModel(number: "1", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "2", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),

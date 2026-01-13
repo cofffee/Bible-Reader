@@ -13,14 +13,16 @@ enum BibleVersion: String, CaseIterable, Identifiable {
     case americanstandard = "american_standard_version"
     case worldenglish = "world_english_bible"
     case smithsliteral = "smiths_literal_translation"
+    case americankingjames = "american_king_james_version"
     
     var title: String {
         switch self {
         case .catholic: return "Catholic Public Domain"
-        case .kingjames: return "King James"
-        case .americanstandard: return "American Standard"
+        case .kingjames: return "King James Version"
+        case .americanstandard: return "American Standard Version"
         case .worldenglish: return "World English Bible"
-        case .smithsliteral: return "Smith's Literal"
+        case .smithsliteral: return "Smith's Literal Version"
+        case .americankingjames: return "American King James Version"
         }
     }
     var oldTestamentCount: Int {
@@ -33,13 +35,14 @@ enum BibleVersion: String, CaseIterable, Identifiable {
         case .americanstandard: return 27
         case .worldenglish: return  28
         case .smithsliteral: return 27
+        case .americankingjames: return 27
         }
     }
 }
 class BibleViewModel: ObservableObject {
     @Published var bibleRawStringLines: [String] = []
-    @Published var bible = BibleModel(books: [], version: .americanstandard)
-    let defaultBibleVersion: BibleVersion = .americanstandard
+    @Published var bible = BibleModel(books: [], version: .kingjames)
+    let defaultBibleVersion: BibleVersion = .americankingjames
     var isLoading = false
     init() {
         Task {
@@ -85,7 +88,8 @@ class BibleViewModel: ObservableObject {
             isLoading = false
         }
     }
-    struct Line {
+    struct Line: Identifiable, Hashable {
+        var id: String = UUID().uuidString
         let book: String
         let chapterNum: String
         let verseNum: String
@@ -118,7 +122,7 @@ class BibleViewModel: ObservableObject {
         for line in lines {
             let parsedLine = BibleViewModel.parse(line: line)
             let verseModel = VerseModel(number: parsedLine.verseNum, verse: parsedLine.verse)
-            let chapterModel = ChapterModel(number: parsedLine.chapterNum, verses: [verseModel])
+            let chapterModel = ChapterModel(book: parsedLine.book, number: parsedLine.chapterNum, verses: [verseModel])
             let bookModel = BookModel(name: parsedLine.book, chapters: [chapterModel])
 
             //buildingBible.books.append(bookModel) // TODO: create an update method for bible
