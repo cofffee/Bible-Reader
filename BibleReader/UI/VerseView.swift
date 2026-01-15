@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct VerseView: View {
-    @AppStorage("savedVerses", store: UserDefaults(suiteName: "SavedVerses.OpenBibleReader")) var savedVerses: Data = .init()
-    @State var tempVersesArray: [String] = []
     @State private var isPlaying: Bool = false
     var chapter: ChapterModel
     init(chapter: ChapterModel) {
@@ -24,21 +22,14 @@ struct VerseView: View {
                     Text("\(verse.number) \(verse.verse)")
                         .textSelection(.enabled)
                         .contextMenu { // Adds custom menu items on long press
-                            Button {
-                                UIPasteboard.general.string = "\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)"//"\(verse.number) \(verse.verse)"
-                            } label: {
-                                Label("Copy", systemImage: "document.on.document")
-                            }
+                            CopyButtonView(line: "\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)")
                             ShareLink(item: "\(verse.number) \(verse.verse)")
-                            Button {
-                                // SAVE THE VERSE
-                                tempVersesArray = Storage.loadStringArray(data: savedVerses)
-                                tempVersesArray.append("\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)")
-                                savedVerses = Storage.archiveStringArray(object: tempVersesArray)
-                                
-                            } label: {
-                                Label("Save", systemImage: "heart")
-                            }
+                            SaveVerseButtonView(
+                                line: SaveLine(
+                                    book: chapter.book,
+                                    chapterNum: chapter.number,
+                                    verseNum: verse.number,
+                                    verse: verse.verse))
                         }
                 }
             }

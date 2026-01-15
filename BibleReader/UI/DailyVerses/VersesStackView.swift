@@ -51,6 +51,14 @@ struct VersesStackView: View {
                                         .padding(.trailing, 12)
                                         .padding(.leading, 12)
                                         .font(.system(size: 24))
+                                        .contextMenu {
+                                            SaveVerseButtonView(
+                                                line: SaveLine(
+                                                    book: lineModel.book,
+                                                    chapterNum: lineModel.chapterNum,
+                                                    verseNum: lineModel.verseNum,
+                                                    verse: lineModel.verse))
+                                        }
                                     HStack {
                                         Text(lineModel.composite)
                                             .font(.system(size: 12))

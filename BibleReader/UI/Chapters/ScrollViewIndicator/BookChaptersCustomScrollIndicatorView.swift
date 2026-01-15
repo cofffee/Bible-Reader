@@ -40,7 +40,13 @@ struct BookChaptersCustomScrollIndicatorView: View {
     }
     func chapterVerses(index: Int) -> some View {
         ForEach(book.chapters[checked: index-1]?.verses ?? []) { item in
-            RowView(text: "\(item.number) \(item.verse)")
+            RowView(
+                text: "\(item.number) \(item.verse)",
+                verse: SaveLine(
+                    book: book.name,
+                    chapterNum: "\(index)",
+                    verseNum: item.number,
+                    verse: item.verse))
         }
     }
     func sectionIndexTitles(proxy: ScrollViewProxy) -> some View {
@@ -68,14 +74,18 @@ struct HeaderView: View {
 }
 
 struct RowView: View {
+    @State private var showAlert = false
     let text: String
+    let verse: SaveLine
     var body: some View {
         Text(text)
         .padding(.leading, 8)
         .padding(.trailing, 8)
         .padding(.bottom, 2)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .textSelection(.enabled)
+        .contextMenu {
+            SaveVerseButtonView(line: verse)
+        }
     }
 }
 struct SectionIndexTitles: View {

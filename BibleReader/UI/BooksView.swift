@@ -19,7 +19,8 @@ struct BooksView: View {
         scrollview
         .toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
-                premiumsubscriptiontoolbar
+//                premiumsubscriptiontoolbar
+                savedversestoolbar
                 darkmodetoolbar
             }
             ToolbarItemGroup(placement: .topBarTrailing) {
@@ -154,7 +155,14 @@ struct BooksView: View {
             Image(systemName: "book")
         }
     }
-
+    @ViewBuilder
+    private var savedversestoolbar: some View {
+        NavigationLink {
+            SavedVersesView()
+        } label: {
+            Image(systemName: "list.star")
+        }
+    }
     @ViewBuilder
     private var bibleVersionsList: some View {
         ForEach(BibleVersion.allCases) { version in
