@@ -20,13 +20,31 @@ struct SavedVersesView: View {
             }
             .onDelete(perform: deleteVerse)
         }
+        .animation(.spring, value: savedVerses)
         .listStyle(.plain)
         .navigationTitle("Favorites")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                sharetoolbar
+            }
+            
+        }
+        .scrollIndicators(.hidden)
+
     }
     func deleteVerse(at offsets: IndexSet) {
         var storedVersesArray = Storage.loadStringArray(data: savedVerses)
         storedVersesArray.remove(atOffsets: offsets)
         savedVerses = Storage.archiveStringArray(object: storedVersesArray)
+    }
+
+    @ViewBuilder
+    private var sharetoolbar: some View {
+        let copyOfSaved = Storage.loadStringArray(
+            data: savedVerses).map {
+                "\($0.verse) \($0.composite)"
+            }.joined(separator: "\n")
+        ShareLink(item: copyOfSaved)
     }
 }
 struct SavedVerseRowView: View {
@@ -35,9 +53,14 @@ struct SavedVerseRowView: View {
     var body: some View {
         VStack {
             Text(verse)
+                .font(.system(size: 21))
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 8)
+                .padding(.trailing, 13)
             Text(verseIdentifier)
-                .frame(maxWidth: .infinity, alignment: .center)
+                .font(.system(size: 13))
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.trailing, 13)
         }
     }
 }

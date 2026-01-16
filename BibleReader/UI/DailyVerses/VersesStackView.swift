@@ -25,6 +25,7 @@ struct VersesStackView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                favoritetoolbar
                 randomizetoolbar
             }
         }
@@ -35,7 +36,11 @@ struct VersesStackView: View {
         Button(action: { randomize() })
         { Image(systemName: "sparkles") }
     }
-
+    @ViewBuilder
+    var favoritetoolbar: some View {
+        Button(action: { randomize() })
+        { Image(systemName: "heart") }
+    }
     @ViewBuilder
     var scrollview: some View {
         ScrollView {
@@ -61,7 +66,7 @@ struct VersesStackView: View {
                                         }
                                     HStack {
                                         Text(lineModel.composite)
-                                            .font(.system(size: 12))
+                                            .font(.system(size: 13))
                                         
                                     }
                                     .padding(.top, 8)
@@ -88,6 +93,9 @@ struct VersesStackView: View {
     func randomize() {
         guard let randomVerse = bibleLines.randomElement() else { return }
         scrollPosition = randomVerse
+    }
+    func saveVerse() {
+        
     }
 }
 

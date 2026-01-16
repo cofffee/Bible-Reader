@@ -13,7 +13,7 @@ class Storage: NSObject {
         do {
             let data = try NSKeyedArchiver.archivedData(
                 withRootObject: object,
-                requiringSecureCoding: false)
+                requiringSecureCoding: true)
                 return data
         } catch {
             fatalError("Can't encode data: \(error)")
@@ -22,7 +22,7 @@ class Storage: NSObject {
 
     static func loadStringArray(data: Data) -> [SaveLine] {
         do {
-            let allowedClasses = [NSArray.self, SaveLine.self]
+            let allowedClasses = [NSArray.self, NSString.self, SaveLine.self]
             guard let array = try NSKeyedUnarchiver.unarchivedObject(
                 ofClasses: allowedClasses,
                 from: data) as? [SaveLine] else { return []
@@ -71,6 +71,6 @@ class SaveLine:  NSObject, NSSecureCoding {
     let verseNum: String
     let verse: String
     var composite: String {
-        return "\(book) \(chapterNum) \(verseNum)"
+        return "\(book) \(chapterNum):\(verseNum)"
     }
 }
