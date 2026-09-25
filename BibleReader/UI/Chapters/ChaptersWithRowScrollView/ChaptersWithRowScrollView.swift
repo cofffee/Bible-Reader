@@ -1,5 +1,5 @@
 //
-//  CustomScrollViewIndicator.swift
+//  ChaptersWithRowScrollView.swift
 //  BibleReader
 //
 //  Created by Kevin Remigio on 8/8/25.
@@ -7,29 +7,29 @@
 
 import SwiftUI
 
-struct BookChaptersCustomScrollIndicatorView: View {
+struct ChaptersWithRowScrollView: View {
     let book: BookModel
     var body: some View {
         ScrollViewReader { proxy in
             HStack {
-                booksList
-                sectionIndexTitles(proxy: proxy)
-                .frame(width: 64) //144 //84
+                chapterRow
+                sectionIndexTitlesRow(proxy: proxy)
+                .frame(width: 70)//64) //144 //84
             }
         }
         .navigationBarTitle(book.name)
   }
 
-    var booksList: some View {
+    var chapterRow: some View {
         ScrollView {
             LazyVStack {
                 ForEach(Array(book.chapters.map { $0.number }), id: \.self) { title in //.sorted()
                     if let chapterNumber = Int(title),
                        let chapter = book.chapters[checked: chapterNumber-1] {
-                        Section(header: HeaderView(
+                        Section(header: ChapterNumberView(
                             title: title,
                             chapter: chapter)) {
-                                chapterVerses(index: chapterNumber)
+                                verses(index: chapterNumber)
                         }
                     }
                 }
@@ -38,10 +38,11 @@ struct BookChaptersCustomScrollIndicatorView: View {
         .scrollIndicators(.hidden)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    func chapterVerses(index: Int) -> some View {
+    func verses(index: Int) -> some View {
         ForEach(book.chapters[checked: index-1]?.verses ?? []) { item in
-            RowView(
-                text: "\(item.number) \(item.verse)",
+            VerseRowView(
+                verseNumberString: item.number,
+                verseString: "\(item.verse)",
                 verse: SaveLine(
                     book: book.name,
                     chapterNum: "\(index)",
@@ -49,38 +50,42 @@ struct BookChaptersCustomScrollIndicatorView: View {
                     verse: item.verse))
         }
     }
-    func sectionIndexTitles(proxy: ScrollViewProxy) -> some View {
-        SectionIndexTitles(
+    func sectionIndexTitlesRow(proxy: ScrollViewProxy) -> some View {
+        SectionIndexTitlesRowView(
             proxy: proxy,
             titles: Array(book.chapters.map { $0.number }))
         .frame(maxWidth: .infinity, alignment: .trailing)
         .padding(.top, 12)
- 
     }
 }
 
-struct HeaderView: View {
+struct ChapterNumberView: View {
     let title: String
     let chapter: ChapterModel
     var body: some View {
         NavigationLink(value: chapter) {
             Text(title)
-            .font(.title)
-            .fontWeight(.bold)
+                .titleStyle()
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
 
-struct RowView: View {
-    @State private var showAlert = false
-    let text: String
+struct VerseRowView: View {
+    @Environment(\.font) var currentFont
+    let verseNumberString: String
+    let verseString: String
     let verse: SaveLine
     var body: some View {
-        Text(text)
-        .padding(.leading, 8)
-        .padding(.trailing, 8)
+        HStack(alignment: .top) {
+            Text(verseNumberString)
+                .bodyStyle(fontSize: 8)
+            Text(verseString)
+                .bodyStyle()
+        }
+        .padding(.leading, 10)
+        .padding(.trailing, 4)
         .padding(.bottom, 2)
         .frame(maxWidth: .infinity, alignment: .leading)
         .contextMenu {
@@ -88,7 +93,8 @@ struct RowView: View {
         }
     }
 }
-struct SectionIndexTitles: View {
+
+struct SectionIndexTitlesRowView: View {
     let proxy: ScrollViewProxy
     let titles: [String]
     @GestureState private var dragLocation: CGPoint = .zero
@@ -110,6 +116,7 @@ struct SectionIndexTitles: View {
                     })
         }
         .scrollIndicators(.hidden)
+//        .background(Color.red)
     }
     
     func dragObserver(title: String) -> some View {
@@ -134,7 +141,7 @@ struct SectionIndexTitle: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 8, style: .continuous)
         .foregroundColor(Color.clear)
-        .frame(width: 30)//40)
+        .frame(width: 38)//30)//40)
         .overlay(
             Text(title)
             .foregroundColor(.blue)
@@ -143,12 +150,12 @@ struct SectionIndexTitle: View {
     }
 }
 #Preview {
-    BookChaptersCustomScrollIndicatorView(book: BookModel(
+    ChaptersWithRowScrollView(book: BookModel(
         name: "gem",
         chapters: [
             ChapterModel(
                 book: "Genesis",
-                number: "judas",
+                number: "1",
                 verses: [ VerseModel(number: "1", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "2", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "3", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
@@ -160,7 +167,7 @@ struct SectionIndexTitle: View {
             ),
             ChapterModel(
                 book: "Genesis",
-                number: "carrot",
+                number: "2",
                 verses: [ VerseModel(number: "1", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "2", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "3", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
@@ -172,7 +179,7 @@ struct SectionIndexTitle: View {
             ),
             ChapterModel(
                 book: "Genesis",
-                number: "beach",
+                number: "3",
                 verses: [ VerseModel(number: "1", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "2", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),
                           VerseModel(number: "3", verse: "And there went out to him all the region of Judea and all those of Jerusalem, and they were baptized by him in the river Jordan, confessing their sins."),

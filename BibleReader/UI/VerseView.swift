@@ -8,29 +8,58 @@
 import SwiftUI
 
 struct VerseView: View {
+    @AppStorage("Font") var defaultFont: String?
     @State private var isPlaying: Bool = false
     var chapter: ChapterModel
+
+    @State private var isFastReader: Bool = false
+    @State var showSheet: Bool = false
     init(chapter: ChapterModel) {
         self.chapter = chapter
         SpeechManager.shared.queue = chapter.verses.map { $0.verse }
     }
 
+    @ViewBuilder
+    var content: some View {
+        verseView
+        /*
+        if isFastReader {
+            fastreaderView
+        } else {
+            verseView
+        }
+         */
+    }
     var body: some View {
+        content
+    }
+
+    var fastreaderView: some View {
+        FastReaderView(isFastReader: $isFastReader, reader: FastReaderViewModel(chapter: chapter.verses.map { $0.verse } ))
+    }
+    var verseView: some View {
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
                 ForEach(chapter.verses, id: \.self) { verse in
-                    Text("\(verse.number) \(verse.verse)")
-                        .textSelection(.enabled)
-                        .contextMenu { // Adds custom menu items on long press
-                            CopyButtonView(line: "\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)")
-                            ShareLink(item: "\(verse.number) \(verse.verse)")
-                            SaveVerseButtonView(
-                                line: SaveLine(
-                                    book: chapter.book,
-                                    chapterNum: chapter.number,
-                                    verseNum: verse.number,
-                                    verse: verse.verse))
-                        }
+                    HStack(alignment: .top) {
+                        Text(verse.number)
+                            .bodyStyle(fontSize: 8)
+                        Text(verse.verse)
+                            .bodyStyle()
+                            .padding(.bottom, 2)
+                    }
+                    //.font(.system(.body, design: .serif))
+                    .textSelection(.enabled)
+                    .contextMenu { // Adds custom menu items on long press
+                        CopyButtonView(line: "\(chapter.book) \(chapter.number):\(verse.number) \(verse.verse)")
+                        ShareLink(item: "\(verse.number) \(verse.verse)")
+                        SaveVerseButtonView(
+                            line: SaveLine(
+                                book: chapter.book,
+                                chapterNum: chapter.number,
+                                verseNum: verse.number,
+                                verse: verse.verse))
+                    }
                 }
             }
         }
@@ -40,31 +69,35 @@ struct VerseView: View {
         .navigationTitle("\(chapter.number)")
         .onDisappear(perform: stop)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                ToolbarButton.textformattoolbar(showSheet: $showSheet)
                 stopButton
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
                 playPauseButton
             }
         }
     }
-
     @ViewBuilder
     private var playPauseButton: some View {
-        Button(action: {
+        Button {
             isPlaying ? pause() : speak()
             isPlaying.toggle()
-        }) {
+        } label: {
             Image(systemName: isPlaying ? "pause" : "play")
         }
     }
     @ViewBuilder
     private var stopButton: some View {
-        Button(action: {
+        Button {
             stop()
             isPlaying = false
-        }) {
+        } label: {
             Image(systemName: "stop")
+        }
+    }
+
+    private var fastReaderButton: some View {
+        Button { isFastReader.toggle() } label: {
+            Image(systemName: "hare")
         }
     }
     func speak() {
@@ -78,5 +111,5 @@ struct VerseView: View {
     }
 }
 #Preview {
-    //VerseView()
+//    VerseView()
 }

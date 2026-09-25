@@ -53,12 +53,12 @@ struct SavedVerseRowView: View {
     var body: some View {
         VStack {
             Text(verse)
-                .font(.system(size: 21))
+                .bodyStyle(fontSize: 21)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 8)
                 .padding(.trailing, 13)
             Text(verseIdentifier)
-                .font(.system(size: 13))
+                .bodyStyle(fontSize: 13)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.trailing, 13)
         }

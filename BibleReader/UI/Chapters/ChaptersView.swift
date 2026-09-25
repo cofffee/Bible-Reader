@@ -8,12 +8,21 @@
 import SwiftUI
 
 struct ChaptersView: View {
+    @AppStorage("isDarkMode") var isDarkMode: Bool = false
+    @State var showSheet: Bool = false
     var book: BookModel
     init(book: BookModel) {
         self.book = book
     }
     var body: some View {
-        BookChaptersCustomScrollIndicatorView(book: book)
+        ChaptersWithRowScrollView(book: book)
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                ToolbarButton.textformattoolbar(showSheet: $showSheet)
+                ToolbarButton.savedversestoolbar
+                ToolbarButton.darkmodetoolbar(isDarkMode: $isDarkMode)
+            }
+        }
     }
 }
 

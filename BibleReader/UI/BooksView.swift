@@ -19,13 +19,18 @@ struct BooksView: View {
         scrollview
         .toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
-//                premiumsubscriptiontoolbar
-                savedversestoolbar
-                darkmodetoolbar
+                ToolbarButton.savedversestoolbar
+                ToolbarButton.darkmodetoolbar(isDarkMode: $isDarkMode)
+            }
+            ToolbarItem(placement: .principal) {
+                Text("The Bible")
+                    .titleStyle()
+                    .navigationBarTitleDisplayMode(.inline)
             }
             ToolbarItemGroup(placement: .topBarTrailing) {
-                versetoolbar
-                searchablebooktoolbar
+                ToolbarButton.textformattoolbar(showSheet: $showSheet)
+                ToolbarButton.versetoolbar(bibleLines: bibleViewModel.bibleRawStringLines)
+                ToolbarButton.searchablebooktoolbar(bibleLines: bibleViewModel.bibleRawStringLines)
             }
         }
         .toolbarTitleMenu {
@@ -65,6 +70,7 @@ struct BooksView: View {
             ForEach(bibleViewModel.bible.books.prefix(count), id: \.self) { book in
                 NavigationLink(value: book) {
                     Text(book.name)
+                        .bodyStyle()
                 }
                 .padding(.vertical, 2)
                 .padding(.trailing, 12)
@@ -78,91 +84,14 @@ struct BooksView: View {
             ForEach(bibleViewModel.bible.books.suffix(count), id: \.self) { book in
                 NavigationLink(value: book) {
                     Text(book.name)
+                        .bodyStyle()
                 }
                 .padding(.vertical, 2)
                 .padding(.trailing, 12)
             }
         }
     }
-    @ViewBuilder
-    private var premiumsubscriptiontoolbar: some View {
-        Button(action: {
-            showSheet.toggle()
-       }) {
-           Image(systemName: "crown")
-       }
-        /* Full Screen Cover
-       .fullScreenCover(isPresented: $showSheet) {
-           SubscriptionScreen()
-       }
-         */
-        ///*Sheet
-       .sheet(isPresented: $showSheet) {
-           //SubscriptionScreenView(show: $showSheet)
-//           SubscriptionScreenView()
-           /* SettingsView() */
-           SavedVersesView()
-       }
 
-//        ZStack {
-//            if showSheet {
-//                SubscriptionScreen()//show: $showSheet)
-//                    .padding(.top, 100)
-//                    .transition(.move(edge: .bottom))
-//                    .animation(.spring())
-//            }
-//        }
-//        .zIndex(2.0)
-//        SubscriptionScreenView()//show: $showSheet)
-//            .padding(.top, 100)
-//            .offset(y: showSheet ? 0 : UIScreen.main.bounds.height)
-//            .animation(.spring())
-        
-//        if showSheet {
-//            VersesStackView(bibleLines: bibleViewModel.bibleRawStringLines)
-//                .transition(.move(edge: .bottom))
-//                .animation(.spring(), value: UUID())
-//
-//            SubscriptionScreenView()
-//                .transition(.move(edge: .bottom))
-//                .animation(.spring(), value: UUID())
-//        }
-    }
-
-    @ViewBuilder
-    private var darkmodetoolbar: some View {
-        Button(action: {
-            isDarkMode.toggle()
-       }) {
-           Image(systemName: "moon")
-       }
-    }
-
-    @ViewBuilder
-    private var versetoolbar: some View {
-        NavigationLink {
-            VersesStackView(bibleLines: bibleViewModel.bibleRawStringLines)
-        } label: {
-            Image(systemName: "book.pages")
-        }
-    }
-
-    @ViewBuilder
-    private var searchablebooktoolbar: some View {
-        NavigationLink {
-            SearchableBibleStackView(bibleLines: bibleViewModel.bibleRawStringLines)
-        } label: {
-            Image(systemName: "book")
-        }
-    }
-    @ViewBuilder
-    private var savedversestoolbar: some View {
-        NavigationLink {
-            SavedVersesView()
-        } label: {
-            Image(systemName: "list.star")
-        }
-    }
     @ViewBuilder
     private var bibleVersionsList: some View {
         ForEach(BibleVersion.allCases) { version in
@@ -175,7 +104,8 @@ struct BooksView: View {
     }
 }
 #Preview {
-    BooksView(bibleViewModel: BibleViewModel())
+    //BooksView(bibleViewModel: BibleViewModel())
     //SubscriptionScreen(show: true)
     //SubscriptionScreenView()
+    FontMenuView()
 }
