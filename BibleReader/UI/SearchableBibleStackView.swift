@@ -16,6 +16,7 @@ struct SearchableBibleStackView: View {
                 lineCount
                 ForEach(viewModel.isSearching ? viewModel.filteredBibleRawStringLines :  viewModel.bibleRawStringLines, id: \.self) { line in
                     Text(line)
+                        .bodyStyle()
                 }
             }
             .padding(.trailing, 8)

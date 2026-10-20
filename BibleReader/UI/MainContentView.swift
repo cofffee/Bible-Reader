@@ -16,7 +16,6 @@ struct MainContentView: View {
         NavigationStack {
             BooksView(bibleViewModel: viewModel)
                 .preferredColorScheme(isDarkMode ? .dark : .light)
-            //.environment(\.font, .custom(defaultFont ?? "SF Pro", size: 17))
         }
         .task {
             await viewModel.fetchBooks()

@@ -8,9 +8,10 @@
 import Foundation
 import AVFoundation
 
+@MainActor
 class SpeechManager: NSObject {
     static let shared = SpeechManager()
-    @MainActor private let synthesizer = AVSpeechSynthesizer()
+     private let synthesizer = AVSpeechSynthesizer()
     private var currentUtteranceIndex = 0
     private var stop = false
     private var pause = false
@@ -18,11 +19,7 @@ class SpeechManager: NSObject {
     var queue: [String] = []
     override init() {
         super.init()
-        Task {
-            await MainActor.run {
-                synthesizer.delegate = self
-            }
-        }
+        synthesizer.delegate = self
     }
     func speakFromBeginning() {
         stop = false
@@ -31,20 +28,12 @@ class SpeechManager: NSObject {
     }
     func pauseSpeaking() {
         pause = true
-        Task {
-            await MainActor.run {
-                synthesizer.pauseSpeaking(at: .immediate)
-            }
-        }
+        synthesizer.pauseSpeaking(at: .immediate)
     }
     func stopSpeaking() {
         currentUtteranceIndex = 0
         stop = true
-        Task {
-            await MainActor.run {
-                synthesizer.stopSpeaking(at: .immediate)
-            }
-        }
+        synthesizer.stopSpeaking(at: .immediate)
     }
     func speakNext() {
         pauseIndex = currentUtteranceIndex
@@ -57,19 +46,17 @@ class SpeechManager: NSObject {
     }
 
     func speak(string: String) {
-        Task {
-            await MainActor.run {
-                let utterance = AVSpeechUtterance(string: string)
-                utterance.voice = AVSpeechSynthesisVoice(language: "en-GB")
-                utterance.pitchMultiplier = 1.0 //0.8
-                
-                synthesizer.speak(utterance)
-                synthesizer.stopSpeaking(at: .immediate)
-            }
-        }
+        let utterance = AVSpeechUtterance(string: string)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-GB")
+        utterance.pitchMultiplier = 1.0 //0.8
+
+        synthesizer.speak(utterance)
+        synthesizer.stopSpeaking(at: .immediate)
     }
 }
-extension SpeechManager: AVSpeechSynthesizerDelegate {
+
+extension SpeechManager: @preconcurrency AVSpeechSynthesizerDelegate {
+    
     func speechSynthesizer(
         _ synthesizer: AVSpeechSynthesizer,
         didPause utterance: AVSpeechUtterance) {
