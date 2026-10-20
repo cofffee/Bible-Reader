@@ -10,6 +10,7 @@ import SwiftUI
 struct TitleStyle: ViewModifier {
     let fontSize: CGFloat
     @AppStorage("Font") var defaultFont: String?
+    
     func body(content: Content) -> some View {
         content
             .font(.custom(defaultFont ?? "SF Pro", size: fontSize))
@@ -18,10 +19,17 @@ struct TitleStyle: ViewModifier {
 }
 struct BodyStyle: ViewModifier {
     @AppStorage("Font") var defaultFont: String?
+    @AppStorage("BodyFontSize") var bodyFontSize: Double?
     let fontSize: CGFloat
     func body(content: Content) -> some View {
-        content
-            .font(.custom(defaultFont ?? "SF Pro", size: fontSize))
+        if let sizeDouble = bodyFontSize {
+            content
+                .font(.custom(defaultFont ?? "SF Pro", size: CGFloat(sizeDouble)))
+        } else {
+            content
+                .font(.custom(defaultFont ?? "SF Pro", size: fontSize))
+        }
+        
     }
 }
 

@@ -6,52 +6,44 @@
 //
 
 import Foundation
-enum BibleVersion: String, CaseIterable, Identifiable {
-    var id: Self { self }
-    case catholic = "catholic_public_domain_version_bible"
-    case kingjames = "king_james_version_bible"
-    case americanstandard = "american_standard_version"
-    case worldenglish = "world_english_bible"
-    case smithsliteral = "smiths_literal_translation"
-    case americankingjames = "american_king_james_version"
-    
-    var title: String {
-        switch self {
-        case .catholic: return "Catholic Public Domain"
-        case .kingjames: return "King James Version"
-        case .americanstandard: return "American Standard Version"
-        case .worldenglish: return "World English Bible"
-        case .smithsliteral: return "Smith's Literal Version"
-        case .americankingjames: return "American King James Version"
-        }
-    }
-    var oldTestamentCount: Int {
-        return 39
-    }
-    var newTestamentCount: Int {
-        switch self {
-        case .catholic: return 27
-        case .kingjames: return 28
-        case .americanstandard: return 27
-        case .worldenglish: return  28
-        case .smithsliteral: return 27
-        case .americankingjames: return 27
-        }
-    }
-}
+import Combine
+
 class BibleViewModel: ObservableObject {
-    @Published var bibleRawStringLines: [String] = []
+    @Published private(set) var bibleRawStringLines: [String] = []
     @Published var bible = BibleModel(books: [], version: .kingjames)
     let defaultBibleVersion: BibleVersion = .americankingjames
     var isLoading = false
-    init() {
-        Task {
-            await fetchBooks(version: defaultBibleVersion)
+    
+    @Published private(set) var filteredBibleRawStringLines: [String] = []
+    @Published var searchText: String = ""
+    private var cancellables = Set<AnyCancellable>()
+    var isSearching: Bool {
+        !searchText.isEmpty
+    }
+    private func filterBible(searchText: String) {
+        guard !searchText.isEmpty else {
+            filteredBibleRawStringLines = []
+            return
         }
+        let search = searchText.lowercased()
+        filteredBibleRawStringLines = bibleRawStringLines.filter({ bibleLine in
+            return bibleLine.lowercased().contains(search)
+        })
+    }
+    init() {
+        addSubscribers()
+    }
+    func addSubscribers() {
+        $searchText
+            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .sink { [weak self] searchText in
+                self?.filterBible(searchText: searchText)
+            }
+            .store(in: &cancellables)
     }
 
 //    @MainActor
-    func fetchBooks(version: BibleVersion) async {
+    func fetchBooks(version: BibleVersion = .americankingjames) async {
         isLoading = true
         if let filepath = Bundle.main.path(forResource: version.rawValue, ofType: "txt") {
             do {
@@ -116,6 +108,7 @@ class BibleViewModel: ObservableObject {
 
         return Line(book: bookName, chapterNum: chapterNumber, verseNum: verseNumber, verse: verseLine)
     }
+
     func parseBibleLinesIntoModel(content: String) async -> BibleModel {
         var buildingBible = BibleModel(books: [], version: defaultBibleVersion)
         let lines = content.components(separatedBy: .newlines)

@@ -8,69 +8,37 @@
 import SwiftUI
 
 struct SearchableBibleStackView: View {
-    @State private var searchText = ""
-    @State private var searchIsActive = false
-    var bibleLines: [String]
-
+    @ObservedObject var viewModel: BibleViewModel
+    @State var isSearchShowing = false
     var body: some View {
-        if searchIsActive {
-            content
-                .searchable(
-                    text: $searchText,
-                    isPresented: $searchIsActive)
-        } else { content }
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        scrollview
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                searchtoolbar
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var scrollview: some View {
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
-                if searchIsActive {
-                    Text("\(searchResults.count) results")
-                        .font(.system(size: 20, weight: .bold))
-                        .padding(.top, 8)
-                }
-                
-                ForEach(searchResults, id: \.self) { line in
+                lineCount
+                ForEach(viewModel.isSearching ? viewModel.filteredBibleRawStringLines :  viewModel.bibleRawStringLines, id: \.self) { line in
                     Text(line)
                 }
             }
+            .padding(.trailing, 8)
+            .padding(.leading, 8)
         }
-        .scrollIndicators(.hidden)
-        .padding(.trailing, 8)
-        .padding(.leading, 8)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarButton.searchtoolbar(isSearching: $isSearchShowing)
+            }
+        }
+        .searchable(text: $viewModel.searchText, isPresented: $isSearchShowing, placement: .automatic, prompt: Text("Search"))
     }
 
     @ViewBuilder
-    private var searchtoolbar: some View {
-        Button(action: {
-            withAnimation(.linear) {
-                searchIsActive.toggle()
-            }
-        }) {
-            Image(systemName: "magnifyingglass")
-        }
-    }
-
-    var searchResults: [String] {
-        if searchText.isEmpty {
-            return bibleLines
-        } else {
-            return bibleLines.filter { $0.contains(searchText) }
+    private var lineCount: some View {
+        if viewModel.isSearching {
+            Text("\(viewModel.filteredBibleRawStringLines.count) results")
+                .font(.system(size: 20, weight: .bold))
+                .padding(.top, 8)
         }
     }
 }
 
 #Preview {
-    SearchableBibleStackView(bibleLines: [])
+    SearchableBibleStackView(viewModel: BibleViewModel())
 }

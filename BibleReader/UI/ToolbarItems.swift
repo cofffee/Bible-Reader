@@ -23,7 +23,7 @@ struct ToolbarButton {
        }
         .sheet(isPresented: showSheet) {
            FontMenuView()
-               .presentationDetents([.height(150)])
+               .presentationDetents([.height(180)])
        }
     }
 
@@ -42,14 +42,19 @@ struct ToolbarButton {
             Image(systemName: "book.pages")
         }
     }
-    
-    
+
     @ViewBuilder
-    static func searchablebooktoolbar(bibleLines: [String]) -> some View {
+    static func searchablebooktoolbar(viewModel: BibleViewModel) -> some View {
         NavigationLink {
-            SearchableBibleStackView(bibleLines: bibleLines)
+            SearchableBibleStackView(viewModel: viewModel)
         } label: {
             Image(systemName: "book")
         }
+    }
+
+    @ViewBuilder
+    static func searchtoolbar(isSearching: Binding<Bool>) -> some View {
+        Button { isSearching.wrappedValue.toggle() } label : { Image(systemName: "magnifyingglass") }
+
     }
 }

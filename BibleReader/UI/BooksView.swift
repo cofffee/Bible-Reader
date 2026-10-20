@@ -30,7 +30,7 @@ struct BooksView: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 ToolbarButton.textformattoolbar(showSheet: $showSheet)
                 ToolbarButton.versetoolbar(bibleLines: bibleViewModel.bibleRawStringLines)
-                ToolbarButton.searchablebooktoolbar(bibleLines: bibleViewModel.bibleRawStringLines)
+                ToolbarButton.searchablebooktoolbar(viewModel: bibleViewModel)
             }
         }
         .toolbarTitleMenu {
