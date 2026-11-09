@@ -56,7 +56,6 @@ struct VersesStackView: View {
                                         .bodyStyle(fontSize: 24)
                                         .padding(.trailing, 12)
                                         .padding(.leading, 12)
-//                                        .font(.system(size: 24))
                                         .contextMenu {
                                             SaveVerseButtonView(
                                                 line: SaveLine(
@@ -68,7 +67,6 @@ struct VersesStackView: View {
                                     HStack {
                                         Text(lineModel.composite)
                                             .bodyStyle(fontSize: 13)
-                                            //.font(.system(size: 13))
                                         
                                     }
                                     .padding(.top, 8)

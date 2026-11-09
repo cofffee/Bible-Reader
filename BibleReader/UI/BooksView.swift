@@ -22,13 +22,8 @@ struct BooksView: View {
                 ToolbarButton.savedversestoolbar
                 ToolbarButton.darkmodetoolbar(isDarkMode: $isDarkMode)
             }
-            ToolbarItem(placement: .principal) {
-                Text("The Bible")
-                    .titleStyle()
-                    .navigationBarTitleDisplayMode(.inline)
-            }
             ToolbarItemGroup(placement: .topBarTrailing) {
-                ToolbarButton.textformattoolbar(showSheet: $showSheet)
+//                ToolbarButton.textformattoolbar(showSheet: $showSheet)
                 ToolbarButton.versetoolbar(bibleLines: bibleViewModel.bibleRawStringLines)
                 ToolbarButton.searchablebooktoolbar(viewModel: bibleViewModel)
             }

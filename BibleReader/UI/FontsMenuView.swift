@@ -10,6 +10,7 @@ import SwiftUI
 struct FontMenuView: View {
     @AppStorage("BodyFontSize") var bodyFontSize: Double = 17
     @AppStorage("Font") var defaultFont: String = "Georgia"
+    @Environment(\.colorScheme) var colorScheme
     let fontsList: [String] = ["Baskerville",
                                "Bookerly",
                                "Caecilia", ///CaeciliaLTPro55Roman
@@ -19,6 +20,8 @@ struct FontMenuView: View {
                                "Palatino",
                                "SF Pro"
     ]
+    static let PlusImage = Image(systemName: "plus")
+    static let MinusImage = Image(systemName: "minus")
 
     var body: some View {
         VStack {
@@ -34,14 +37,17 @@ struct FontMenuView: View {
             Button {
                 bodyFontSize = bodyFontSize - 1.0
             } label: {
-                Image(systemName: "minus")
+                FontMenuView.MinusImage
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
             }
             .frame(width: 50, height: 50)
             Slider(value: $bodyFontSize, in: 8...30)
+                .tint(colorScheme == .dark ? .white : .black)
             Button {
                 bodyFontSize = min(max(bodyFontSize + 1.0, 1), 30)
             } label: {
-                Image(systemName: "plus")
+                FontMenuView.PlusImage
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
             }
             .frame(width: 50, height: 50)
         }
@@ -61,7 +67,7 @@ struct FontMenuView: View {
                                     .font(.custom(item, size: 30, relativeTo: .title))
                                 Text(item)
                             }
-                            .foregroundStyle(Color.black)
+                            .foregroundStyle(colorScheme == .dark ? .white : .black)
                             .font(.custom(item, size: 10, relativeTo: .title))
                         }
                         .padding(.horizontal)
